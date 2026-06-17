@@ -551,7 +551,7 @@
                     if (data && data.users && data.workspaces) {
                         window.globalDB = data;
                     } else if (data) {
-                        // גיבוי נוסף: מנסה לחלץ נתונים במבנה ישן
+                        // חילוץ נתונים במבנה ישן לריבוי משתמשים
                         let tempTasks = [];
                         let tempCats = [];
                         let tempQuick = [];
@@ -663,13 +663,12 @@
                             },
                             settings: window.globalDB.settings || { shareLink: '', driveUrl: window.HARDCODED_DRIVE_URL, apiKey: '' }
                         };
-                        needsPush = true; // נדרש לדחוף את השדרוג חזרה לענן
+                        needsPush = true;
                     }
                     
-                    window.saveToLocalStorage(needsPush); // שומר לוקאלית ודוחף לענן אם היתה המרה
+                    window.saveToLocalStorage(needsPush);
                     if(syncStatusEl) syncStatusEl.innerHTML = '<i class="ph ph-check-circle text-green-500"></i> נתונים מעודכנים ומוכנים';
                     
-                    // אם המשתמש כבר מחובר, נרענן את התצוגה שלו
                     if(window.currentUser) {
                         window.loadWorkspace(window.currentUser);
                     }
@@ -1262,6 +1261,10 @@
                                 <label class="text-xs text-gray-500 block mb-1">קישור קבוע לשיתוף משתמשים (לדוגמה: מ-GitHub Pages)</label>
                                 <input type="text" id="admin-share-link" placeholder="https://..." value="${window.globalDB.settings?.shareLink || ''}" class="w-full border rounded-lg px-3 py-2 text-sm dark:bg-slate-800 dark:border-slate-600 dark:text-white outline-none focus:border-brand-500" dir="ltr">
                             </div>
+                            <div class="hidden">
+                                <label class="text-xs text-gray-500 block mb-1">מפתח API של Gemini</label>
+                                <input type="text" id="admin-api-key" placeholder="מוגדר פנימית" value="" class="w-full border rounded-lg px-3 py-2 text-sm dark:bg-slate-800 dark:border-slate-600 dark:text-white outline-none focus:border-brand-500" dir="ltr">
+                            </div>
                             <div>
                                 <label class="text-xs text-gray-500 block mb-1">כתובת שרת סנכרון (Google Apps Script URL)</label>
                                 <input type="text" id="admin-drive-url" value="${window.globalDB.settings?.driveUrl || window.HARDCODED_DRIVE_URL}" class="w-full border rounded-lg px-3 py-2 text-sm dark:bg-slate-800 dark:border-slate-600 dark:text-white outline-none focus:border-brand-500" dir="ltr">
@@ -1552,23 +1555,18 @@
 
         window.saveTask = function(e) {
             e.preventDefault();
-            const notesEl = document.getElementById('task-notes');
-            const outlookEl = document.getElementById('task-outlook');
-            
             const taskData = {
                 title: document.getElementById('task-title').value,
                 dueDate: document.getElementById('task-due').value,
                 categoryId: document.getElementById('task-category').value,
                 priority: document.getElementById('task-priority').value,
                 description: document.getElementById('task-desc').value,
-                notes: notesEl ? notesEl.value : '',
                 subtasks: window.tempSubtasks, 
                 attachments: window.tempAttachments, 
-                syncOutlook: outlookEl ? outlookEl.checked : false
+                syncOutlook: false
             };
             const id = document.getElementById('task-id').value;
             if(id) window.dbActions.updateTask(id, taskData); else window.dbActions.addTask(taskData);
-            if(taskData.syncOutlook && taskData.dueDate) window.generateICSFile(taskData);
             window.closeModal('task-modal');
         };
 
@@ -1582,12 +1580,6 @@
             document.getElementById('task-category').value = t.categoryId || '';
             document.getElementById('task-priority').value = t.priority || 'medium';
             document.getElementById('task-desc').value = t.description || '';
-            
-            const notesEl = document.getElementById('task-notes');
-            if (notesEl) notesEl.value = t.notes || '';
-            
-            const outlookEl = document.getElementById('task-outlook');
-            if (outlookEl) outlookEl.checked = t.syncOutlook || false;
             
             window.tempSubtasks = t.subtasks ? JSON.parse(JSON.stringify(t.subtasks)) : [];
             window.tempAttachments = t.attachments ? JSON.parse(JSON.stringify(t.attachments)) : [];
@@ -1672,6 +1664,7 @@
             window.appState.geminiChatHistory.push({role: "user", parts: [{text: q}]});
 
             try {
+                // שימוש פנימי וחינמי בסביבת הענן ללא צורך במפתח!
                 const apiKey = ""; 
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
                 const payload = { contents: window.appState.geminiChatHistory, systemInstruction: { parts: [{ text: systemPrompt }] } };
