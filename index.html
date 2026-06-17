@@ -2,8 +2,15 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TaskMaster - ניהול משימות חכם</title>
+    
+    <!-- PWA / App-like experience Meta Tags -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0284c7">
+    <link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiVGFza01hc3RlciIsInNob3J0X25hbWUiOiJUYXNrTWFzdGVyIiwic3RhcnRfdXJsIjoiLiIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiNmOGZhZmMiLCJ0aGVtZV9jb2xvciI6IiMwMjg0YzcifQ==">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -27,26 +34,10 @@
             theme: {
                 extend: {
                     colors: {
-                        pastel: {
-                            blue: '#e0f2fe',
-                            green: '#dcfce7',
-                            yellow: '#fef08a',
-                            pink: '#fce7f3',
-                            purple: '#f3e8ff',
-                            orange: '#ffedd5',
-                            red: '#fee2e2'
-                        },
-                        brand: {
-                            50: '#f0f9ff',
-                            100: '#e0f2fe',
-                            500: '#0ea5e9',
-                            600: '#0284c7',
-                            900: '#0c4a6e',
-                        }
+                        pastel: { blue: '#e0f2fe', green: '#dcfce7', yellow: '#fef08a', pink: '#fce7f3', purple: '#f3e8ff', orange: '#ffedd5', red: '#fee2e2' },
+                        brand: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 900: '#0c4a6e' }
                     },
-                    fontFamily: {
-                        sans: ['Inter', 'system-ui', 'sans-serif'],
-                    }
+                    fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
                 }
             }
         }
@@ -55,88 +46,63 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
-        body {
-            font-family: 'Inter', sans-serif;
-            transition: background-color 0.3s, color 0.3s;
-        }
+        body { font-family: 'Inter', sans-serif; transition: background-color 0.3s, color 0.3s; overscroll-behavior-y: none; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .dark ::-webkit-scrollbar-thumb { background: #475569; }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 4px;
-        }
-        .dark ::-webkit-scrollbar-thumb {
-            background: #475569;
-        }
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-5px); } 100% { transform: translateY(0px); } }
+        .animate-float { animation: float 3s ease-in-out infinite; }
 
-        /* Floating Animation */
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-5px); }
-            100% { transform: translateY(0px); }
-        }
-        .animate-float {
-            animation: float 3s ease-in-out infinite;
-        }
+        @keyframes pulse-ring { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+        .timer-running { animation: pulse-ring 2s infinite; color: #ef4444 !important; }
 
-        /* Pomodoro Pulse */
-        @keyframes pulse-ring {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
-            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-        }
-        .timer-running {
-            animation: pulse-ring 2s infinite;
-            color: #ef4444 !important; 
-        }
+        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.18); }
+        .dark .glass { background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255, 255, 255, 0.05); }
 
-        /* Glassmorphism */
-        .glass {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-        }
-        .dark .glass {
-            background: rgba(30, 41, 59, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        /* Calendar Adjustments */
-        .calendar-container .fc {
-            background-color: transparent;
-            border-radius: 0.5rem;
-        }
-        .dark .calendar-container .fc {
-            color: #f1f5f9;
-        }
-        .dark .fc-theme-standard td, .dark .fc-theme-standard th, .dark .fc-theme-standard .fc-scrollgrid {
-            border-color: #334155;
-        }
+        .calendar-container .fc { background-color: transparent; border-radius: 0.5rem; }
+        .dark .calendar-container .fc { color: #f1f5f9; }
+        .dark .fc-theme-standard td, .dark .fc-theme-standard th, .dark .fc-theme-standard .fc-scrollgrid { border-color: #334155; }
         .fc-toolbar-title { font-size: 1.15rem !important; font-weight: 600; }
-        .fc-button-primary {
-            background-color: #0284c7 !important;
-            border-color: #0284c7 !important;
-        }
-        .fc-button-primary:hover {
-            background-color: #0ea5e9 !important;
-            border-color: #0ea5e9 !important;
-        }
-        .dark .fc-button-primary {
-            background-color: #1e293b !important;
-            border-color: #334155 !important;
-        }
+        .fc-button-primary { background-color: #0284c7 !important; border-color: #0284c7 !important; }
+        .fc-button-primary:hover { background-color: #0ea5e9 !important; border-color: #0ea5e9 !important; }
+        .dark .fc-button-primary { background-color: #1e293b !important; border-color: #334155 !important; }
         .fc-toolbar { flex-wrap: wrap; gap: 0.5rem; }
     </style>
 </head>
 <body class="bg-gray-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 overflow-hidden h-screen flex">
+
+    <!-- Login Screen Modal -->
+    <div id="login-screen" class="fixed inset-0 bg-gray-50 dark:bg-slate-900 z-[999] flex items-center justify-center transition-opacity duration-500">
+        <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-2xl max-w-md w-full border border-gray-100 dark:border-slate-700 mx-4 relative">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-500 to-pastel-purple flex items-center justify-center text-white shadow-lg mx-auto mb-4">
+                    <i class="ph ph-check-square-offset text-3xl"></i>
+                </div>
+                <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-brand-600 to-purple-600">TaskMaster</h1>
+                <p class="text-gray-500 dark:text-gray-400 text-sm mt-2">התחבר למערכת</p>
+            </div>
+            
+            <form id="login-form" onsubmit="window.handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">שם משתמש</label>
+                    <input type="text" id="login-user" class="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-brand-500 outline-none dark:text-white transition-all" required dir="ltr">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">סיסמה</label>
+                    <input type="password" id="login-pass" class="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-brand-500 outline-none dark:text-white transition-all" required dir="ltr">
+                </div>
+                <p id="login-error" class="text-red-500 text-sm hidden font-medium text-center">שם משתמש או סיסמה שגויים.</p>
+                <button type="submit" class="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-bold transition-all shadow-md mt-4">
+                    כניסה למערכת
+                </button>
+                <div id="login-sync-status" class="text-xs text-center text-gray-400 mt-4 flex items-center justify-center gap-1 font-medium bg-gray-50 dark:bg-slate-700/50 p-2 rounded-lg">
+                    <i class="ph ph-spinner animate-spin"></i> מתחבר לענן...
+                </div>
+            </form>
+        </div>
+    </div>
 
     <!-- Sidebar -->
     <aside id="sidebar" class="w-64 bg-white dark:bg-slate-800 border-l border-gray-200 dark:border-slate-700 flex flex-col transition-transform duration-300 transform md:translate-x-0 fixed md:relative z-40 h-full right-0 translate-x-full shadow-[rgba(0,0,0,0.05)_5px_0_15px]">
@@ -147,43 +113,52 @@
                 </div>
                 <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-brand-600 to-purple-600 dark:from-brand-400 dark:to-purple-400">TaskMaster</h1>
             </div>
-            <button class="md:hidden text-gray-500 hover:text-gray-700 dark:text-gray-400" onclick="toggleSidebar()">
+            <button class="md:hidden text-gray-500 hover:text-gray-700 dark:text-gray-400" onclick="window.toggleSidebar()">
                 <i class="ph ph-x text-2xl"></i>
             </button>
         </div>
 
         <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
-            <a href="#" onclick="navigate('dashboard')" class="nav-item active flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-colors text-gray-700 hover:bg-brand-50 hover:text-brand-600 dark:text-gray-300 dark:hover:bg-slate-700/50" data-view="dashboard">
+            <a href="#" onclick="window.navigate('dashboard')" class="nav-item active flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-colors text-gray-700 hover:bg-brand-50 hover:text-brand-600 dark:text-gray-300 dark:hover:bg-slate-700/50" data-view="dashboard">
                 <i class="ph ph-squares-four text-xl"></i> דאשבורד
             </a>
-            <a href="#" onclick="navigate('tasks')" class="nav-item flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-colors text-gray-700 hover:bg-brand-50 hover:text-brand-600 dark:text-gray-300 dark:hover:bg-slate-700/50" data-view="tasks">
+            <a href="#" onclick="window.navigate('tasks')" class="nav-item flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-colors text-gray-700 hover:bg-brand-50 hover:text-brand-600 dark:text-gray-300 dark:hover:bg-slate-700/50" data-view="tasks">
                 <div class="flex items-center gap-3"><i class="ph ph-list-checks text-xl"></i> כל המשימות</div>
                 <span id="badge-active" class="bg-brand-100 text-brand-600 py-0.5 px-2 rounded-full text-xs hidden">0</span>
             </a>
-            <a href="#" onclick="navigate('kanban')" class="nav-item flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-colors text-gray-700 hover:bg-brand-50 hover:text-brand-600 dark:text-gray-300 dark:hover:bg-slate-700/50" data-view="kanban">
+            <a href="#" onclick="window.navigate('kanban')" class="nav-item flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-colors text-gray-700 hover:bg-brand-50 hover:text-brand-600 dark:text-gray-300 dark:hover:bg-slate-700/50" data-view="kanban">
                 <i class="ph ph-kanban text-xl"></i> לוח קנבן
             </a>
-            <a href="#" onclick="navigate('archive')" class="nav-item flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-colors text-gray-700 hover:bg-brand-50 hover:text-brand-600 dark:text-gray-300 dark:hover:bg-slate-700/50" data-view="archive">
+            <a href="#" onclick="window.navigate('archive')" class="nav-item flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-colors text-gray-700 hover:bg-brand-50 hover:text-brand-600 dark:text-gray-300 dark:hover:bg-slate-700/50" data-view="archive">
                 <i class="ph ph-archive text-xl"></i> ארכיון
             </a>
-            <a href="#" onclick="navigate('quotes')" class="nav-item flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-colors text-gray-700 hover:bg-brand-50 hover:text-brand-600 dark:text-gray-300 dark:hover:bg-slate-700/50" data-view="quotes">
+            <a href="#" onclick="window.navigate('quotes')" class="nav-item flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-colors text-gray-700 hover:bg-brand-50 hover:text-brand-600 dark:text-gray-300 dark:hover:bg-slate-700/50" data-view="quotes">
                 <i class="ph ph-quotes text-xl"></i> ציטוטים שלי
             </a>
-            <a href="#" onclick="navigate('reports')" class="nav-item flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-colors text-gray-700 hover:bg-brand-50 hover:text-brand-600 dark:text-gray-300 dark:hover:bg-slate-700/50" data-view="reports">
+            <a href="#" onclick="window.navigate('reports')" class="nav-item flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-colors text-gray-700 hover:bg-brand-50 hover:text-brand-600 dark:text-gray-300 dark:hover:bg-slate-700/50" data-view="reports">
                 <i class="ph ph-chart-line-up text-xl"></i> דוחות
             </a>
             
             <div class="pt-4 mt-4 border-t border-gray-200 dark:border-slate-700">
                 <p class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">הגדרות</p>
-                <a href="#" onclick="navigate('categories')" class="nav-item flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-colors text-gray-700 hover:bg-brand-50 hover:text-brand-600 dark:text-gray-300 dark:hover:bg-slate-700/50" data-view="categories">
+                <a href="#" id="nav-users" onclick="window.navigate('users')" class="nav-item flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-colors text-gray-700 hover:bg-brand-50 hover:text-brand-600 dark:text-gray-300 dark:hover:bg-slate-700/50" data-view="users" style="display:none;">
+                    <i class="ph ph-users-three text-xl"></i> ניהול משתמשים
+                </a>
+                <a href="#" onclick="window.navigate('categories')" class="nav-item flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-colors text-gray-700 hover:bg-brand-50 hover:text-brand-600 dark:text-gray-300 dark:hover:bg-slate-700/50" data-view="categories">
                     <i class="ph ph-tags text-xl"></i> קטגוריות
                 </a>
+            </div>
+
+            <div class="mt-8 mb-4 px-4">
+                <button onclick="window.logout()" class="w-full flex items-center justify-center gap-2 py-2 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors font-medium border border-transparent hover:border-red-100 dark:hover:border-red-800">
+                    <i class="ph ph-sign-out text-lg"></i> התנתק
+                </button>
             </div>
         </nav>
     </aside>
 
     <!-- Overlay for mobile sidebar -->
-    <div id="sidebar-overlay" class="fixed inset-0 bg-gray-900/50 z-30 hidden md:hidden glass" onclick="toggleSidebar()"></div>
+    <div id="sidebar-overlay" class="fixed inset-0 bg-gray-900/50 z-30 hidden md:hidden glass" onclick="window.toggleSidebar()"></div>
 
     <!-- Main Content Wrapper -->
     <div class="flex-1 flex flex-col w-full h-full relative">
@@ -191,7 +166,7 @@
         <!-- Top Header -->
         <header class="h-16 bg-white/80 dark:bg-slate-800/80 glass border-b border-gray-200 dark:border-slate-700 flex items-center justify-between px-4 sm:px-6 z-20">
             <div class="flex items-center gap-3 flex-1">
-                <button class="md:hidden text-gray-500 hover:text-brand-600 transition-colors" onclick="toggleSidebar()">
+                <button class="md:hidden text-gray-500 hover:text-brand-600 transition-colors" onclick="window.toggleSidebar()">
                     <i class="ph ph-list text-2xl"></i>
                 </button>
                 <h2 id="page-title" class="text-xl font-semibold hidden sm:block whitespace-nowrap">דאשבורד</h2>
@@ -199,17 +174,32 @@
                 <!-- Smart Filter -->
                 <div class="hidden md:flex items-center bg-gray-100 dark:bg-slate-700/50 rounded-full px-3 py-1.5 mr-4 max-w-sm w-full border border-transparent focus-within:border-brand-500 transition-colors">
                     <i class="ph ph-magnifying-glass text-gray-400 text-lg"></i>
-                    <input type="text" oninput="setFilter(this.value)" placeholder="סינון (משימה או קטגוריה)..." class="bg-transparent border-none outline-none text-sm w-full px-2 dark:text-white">
+                    <input type="text" oninput="window.setFilter(this.value)" placeholder="סינון (משימה או קטגוריה)..." class="bg-transparent border-none outline-none text-sm w-full px-2 dark:text-white">
                 </div>
             </div>
             
-            <div class="flex items-center gap-2 sm:gap-4">
+            <div class="flex items-center gap-2 sm:gap-3">
                 
                 <!-- Cloud Sync Status Indicator -->
                 <div id="cloud-status-indicator" class="hidden items-center gap-1.5 px-3 py-1.5 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 rounded-full text-xs font-medium border border-green-200 dark:border-green-800/50">
                     <i id="cloud-sync-icon" class="ph ph-cloud-check text-lg"></i>
                     <span class="hidden sm:inline">מסונכרן ל-Drive</span>
                 </div>
+
+                <div id="welcome-user" class="hidden md:block text-sm font-medium text-gray-500 dark:text-gray-400 ml-2"></div>
+
+                <!-- 24H Digital Clock -->
+                <div id="header-clock" class="hidden text-lg font-bold text-brand-600 dark:text-brand-400 px-3 border-l border-gray-200 dark:border-slate-700 font-mono tracking-wider">
+                    00:00
+                </div>
+
+                <button onclick="window.toggleClock()" class="w-10 h-10 rounded-full flex items-center justify-center text-gray-500 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors" title="הצג/הסתר שעון">
+                    <i class="ph ph-clock text-xl"></i>
+                </button>
+
+                <button onclick="window.toggleTheme()" class="w-10 h-10 rounded-full flex items-center justify-center text-gray-500 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors" title="מצב לילה">
+                    <i id="theme-icon" class="ph ph-moon text-xl"></i>
+                </button>
 
                 <!-- Export & Sync Menu -->
                 <div class="relative group">
@@ -218,32 +208,28 @@
                     </button>
                     <div class="absolute left-0 mt-2 w-56 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-gray-100 dark:border-slate-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-left z-50">
                         <div class="p-2 space-y-1">
-                            <button onclick="openModal('sync-modal')" class="w-full flex items-center gap-3 px-3 py-2 text-sm text-[#0F9D58] dark:text-[#0F9D58] bg-[#0F9D58]/10 hover:bg-[#0F9D58]/20 rounded-lg transition-colors font-medium border border-[#0F9D58]/20 mb-2">
+                            <button onclick="window.openModal('sync-modal')" class="w-full flex items-center gap-3 px-3 py-2 text-sm text-[#0F9D58] dark:text-[#0F9D58] bg-[#0F9D58]/10 hover:bg-[#0F9D58]/20 rounded-lg transition-colors font-medium border border-[#0F9D58]/20 mb-2">
                                 <i class="ph ph-google-drive-logo text-lg"></i> הגדרת סנכרון Drive
                             </button>
-                            <button onclick="forceSyncFromDrive()" class="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-slate-700 rounded-lg transition-colors font-medium mb-2" id="btn-force-sync" style="display:none;">
+                            <button onclick="window.forceSyncFromDrive()" class="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-slate-700 rounded-lg transition-colors font-medium mb-2" id="btn-force-sync" style="display:none;">
                                 <i class="ph ph-arrows-clockwise text-brand-500 text-lg"></i> משוך נתונים עכשיו
                             </button>
                             <div class="h-px bg-gray-100 dark:bg-slate-700 my-1"></div>
-                            <button onclick="exportData('pdf')" class="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-red-50 hover:text-red-600 dark:hover:bg-slate-700 rounded-lg transition-colors mt-2">
+                            <button onclick="window.exportData('pdf')" class="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-red-50 hover:text-red-600 dark:hover:bg-slate-700 rounded-lg transition-colors mt-2">
                                 <i class="ph ph-file-pdf text-red-500 text-lg"></i> ייצא ל-PDF
                             </button>
-                            <button onclick="exportData('excel')" class="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-green-50 hover:text-green-600 dark:hover:bg-slate-700 rounded-lg transition-colors">
+                            <button onclick="window.exportData('excel')" class="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-green-50 hover:text-green-600 dark:hover:bg-slate-700 rounded-lg transition-colors">
                                 <i class="ph ph-file-xls text-green-500 text-lg"></i> ייצא ל-Excel
                             </button>
-                            <button onclick="exportData('word')" class="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-slate-700 rounded-lg transition-colors">
+                            <button onclick="window.exportData('word')" class="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-slate-700 rounded-lg transition-colors">
                                 <i class="ph ph-file-doc text-blue-500 text-lg"></i> ייצא ל-Word
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <button onclick="toggleTheme()" class="w-10 h-10 rounded-full flex items-center justify-center text-gray-500 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors">
-                    <i id="theme-icon" class="ph ph-moon text-xl"></i>
-                </button>
-
                 <!-- Global Add Task Button -->
-                <button onclick="openModal('task-modal')" class="bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors shadow-md hover:shadow-lg flex items-center gap-2">
+                <button onclick="window.openModal('task-modal')" class="bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors shadow-md hover:shadow-lg flex items-center gap-2">
                     <i class="ph ph-plus-circle text-lg"></i> <span class="hidden sm:inline">משימה חדשה</span>
                 </button>
             </div>
@@ -256,7 +242,7 @@
         
         <!-- Gemini AI Floating Window -->
         <div class="fixed bottom-6 left-6 z-50">
-            <button onclick="toggleGemini()" class="w-14 h-14 bg-gradient-to-tr from-purple-600 to-brand-500 rounded-full shadow-2xl flex items-center justify-center text-white hover:scale-110 transition-transform animate-float focus:outline-none">
+            <button onclick="window.toggleGemini()" class="w-14 h-14 bg-gradient-to-tr from-purple-600 to-brand-500 rounded-full shadow-2xl flex items-center justify-center text-white hover:scale-110 transition-transform animate-float focus:outline-none">
                 <i class="ph ph-sparkle text-3xl"></i>
             </button>
             
@@ -268,8 +254,7 @@
                         <span class="font-semibold">עוזר אישי AI</span>
                     </div>
                     <div class="flex items-center gap-2">
-                        <button onclick="window.promptApiKey()" class="text-white/80 hover:text-white" title="הגדר מפתח API"><i class="ph ph-gear text-xl"></i></button>
-                        <button onclick="toggleGemini()" class="text-white/80 hover:text-white"><i class="ph ph-x text-xl"></i></button>
+                        <button onclick="window.toggleGemini()" class="text-white/80 hover:text-white"><i class="ph ph-x text-xl"></i></button>
                     </div>
                 </div>
                 <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4 text-sm">
@@ -281,7 +266,7 @@
                     </div>
                 </div>
                 <div class="p-3 border-t border-gray-100 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 rounded-b-2xl">
-                    <form id="gemini-form" class="flex items-center gap-2" onsubmit="handleGeminiQuery(event)">
+                    <form id="gemini-form" class="flex items-center gap-2" onsubmit="window.handleGeminiQuery(event)">
                         <input type="text" id="gemini-input" placeholder="שאל אותי משהו..." class="flex-1 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 dark:text-white">
                         <button type="submit" class="w-9 h-9 rounded-full bg-brand-600 text-white flex items-center justify-center hover:bg-brand-700 transition-colors disabled:opacity-50" id="gemini-submit">
                             <i class="ph ph-paper-plane-right"></i>
@@ -296,7 +281,7 @@
     <!-- Sync Cloud Modal -->
     <div id="sync-modal" class="fixed inset-0 bg-gray-900/60 z-[110] hidden flex justify-center items-center p-4 glass">
         <div class="bg-white dark:bg-slate-800 w-full max-w-md rounded-2xl shadow-2xl p-6 relative">
-            <button onclick="closeModal('sync-modal')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"><i class="ph ph-x text-xl"></i></button>
+            <button onclick="window.closeModal('sync-modal')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"><i class="ph ph-x text-xl"></i></button>
             
             <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2 flex items-center gap-2">
                 <i class="ph ph-google-drive-logo text-[#0F9D58]"></i> חיבור ל-Google Drive
@@ -309,7 +294,7 @@
                     <input type="text" id="drive-url-input" placeholder="https://script.google.com/macros/s/.../exec" class="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F9D58] dark:text-white font-mono" dir="ltr">
                 </div>
                 
-                <button onclick="connectDrive()" id="btn-connect-drive" class="w-full py-3 bg-[#0F9D58] hover:bg-[#0b8043] text-white rounded-xl text-sm font-medium transition-colors shadow-sm flex items-center justify-center gap-2">
+                <button onclick="window.connectDrive()" id="btn-connect-drive" class="w-full py-3 bg-[#0F9D58] hover:bg-[#0b8043] text-white rounded-xl text-sm font-medium transition-colors shadow-sm flex items-center justify-center gap-2">
                     <i class="ph ph-link text-lg"></i> התחבר וסנכרן
                 </button>
                 
@@ -317,7 +302,7 @@
                     <i class="ph ph-check-circle text-xl"></i> המערכת מחוברת ומסונכרנת לדרייב.
                 </div>
                 
-                <button onclick="disconnectDrive()" id="btn-disconnect-drive" class="w-full py-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl text-sm font-medium transition-colors hidden">
+                <button onclick="window.disconnectDrive()" id="btn-disconnect-drive" class="w-full py-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl text-sm font-medium transition-colors hidden">
                     נתק סנכרון
                 </button>
             </div>
@@ -331,10 +316,10 @@
                 <h3 class="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2" id="task-modal-title">
                     <i class="ph ph-pencil-simple text-brand-600"></i> משימה חדשה
                 </h3>
-                <button onclick="closeModal('task-modal')" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"><i class="ph ph-x text-2xl"></i></button>
+                <button onclick="window.closeModal('task-modal')" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"><i class="ph ph-x text-2xl"></i></button>
             </div>
             
-            <form id="task-form" class="p-6 space-y-6 max-h-[70vh] overflow-y-auto" onsubmit="saveTask(event)">
+            <form id="task-form" class="p-6 space-y-6 max-h-[70vh] overflow-y-auto" onsubmit="window.saveTask(event)">
                 <input type="hidden" id="task-id">
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -381,8 +366,8 @@
                             <!-- Injected via JS -->
                         </div>
                         <div class="flex gap-2">
-                            <input type="text" id="new-subtask-input" placeholder="הוסף תת משימה..." class="flex-1 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none dark:text-white" onkeypress="if(event.key==='Enter'){event.preventDefault(); addSubtaskUI();}">
-                            <button type="button" onclick="addSubtaskUI()" class="bg-gray-100 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-700 dark:text-white px-3 py-2 rounded-xl text-sm font-medium transition-colors">
+                            <input type="text" id="new-subtask-input" placeholder="הוסף תת משימה..." class="flex-1 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none dark:text-white" onkeypress="if(event.key==='Enter'){event.preventDefault(); window.addSubtaskUI();}">
+                            <button type="button" onclick="window.addSubtaskUI()" class="bg-gray-100 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-700 dark:text-white px-3 py-2 rounded-xl text-sm font-medium transition-colors">
                                 הוסף
                             </button>
                         </div>
@@ -390,32 +375,19 @@
 
                     <div class="col-span-1 md:col-span-2 border-t border-gray-100 dark:border-slate-700 pt-4 mt-2">
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">קבצים ואינטגרציות</label>
-                        
-                        <!-- List of attached files -->
                         <div id="attachments-container" class="flex flex-col gap-2 mb-3"></div>
-
                         <div class="flex flex-wrap gap-4">
                             <label class="cursor-pointer flex items-center gap-2 px-4 py-2.5 bg-gray-50 dark:bg-slate-800 border border-dashed border-gray-300 dark:border-slate-600 rounded-xl hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors">
                                 <i class="ph ph-upload-simple text-gray-500"></i>
                                 <span class="text-sm font-medium dark:text-gray-200">העלה קובץ (עד 500KB)</span>
-                                <input type="file" class="hidden" onchange="handleFileUpload(event)">
-                            </label>
-                            <label class="flex items-center gap-2 px-4 py-2.5 bg-[#0078D4]/10 text-[#0078D4] dark:bg-[#0078D4]/20 dark:text-blue-400 border border-[#0078D4]/20 rounded-xl cursor-pointer">
-                                <input type="checkbox" id="task-outlook" class="rounded text-blue-600 focus:ring-blue-500">
-                                <i class="ph ph-envelope-simple"></i>
-                                <span class="text-sm font-medium">סנכרן ל-Outlook</span>
+                                <input type="file" class="hidden" onchange="window.handleFileUpload(event)">
                             </label>
                         </div>
-                    </div>
-                    
-                    <div class="col-span-1 md:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">הערות נוספות</label>
-                        <textarea id="task-notes" rows="2" class="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-brand-500 outline-none dark:text-white text-sm"></textarea>
                     </div>
                 </div>
 
                 <div class="flex justify-end gap-3 pt-4 border-t border-gray-100 dark:border-slate-700 mt-6">
-                    <button type="button" onclick="closeModal('task-modal')" class="px-5 py-2.5 text-gray-600 dark:text-gray-300 font-medium hover:bg-gray-100 dark:hover:bg-slate-700 rounded-xl transition-colors">ביטול</button>
+                    <button type="button" onclick="window.closeModal('task-modal')" class="px-5 py-2.5 text-gray-600 dark:text-gray-300 font-medium hover:bg-gray-100 dark:hover:bg-slate-700 rounded-xl transition-colors">ביטול</button>
                     <button type="submit" class="px-5 py-2.5 bg-brand-600 text-white font-medium hover:bg-brand-700 rounded-xl shadow-md transition-colors flex items-center gap-2">
                         <i class="ph ph-floppy-disk"></i> שמור משימה
                     </button>
@@ -430,11 +402,11 @@
             <div class="w-16 h-16 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-full flex items-center justify-center mx-auto mb-4">
                 <i class="ph ph-warning-circle text-3xl"></i>
             </div>
-            <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">ביטול משימה</h3>
-            <p class="text-gray-500 dark:text-gray-400 mb-6 text-sm">האם אתה בטוח שברצונך לבטל משימה זו ולהעבירה לארכיון?</p>
+            <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">אישור פעולה</h3>
+            <p id="confirm-modal-text" class="text-gray-500 dark:text-gray-400 mb-6 text-sm">האם אתה בטוח שברצונך להמשיך?</p>
             <div class="flex justify-center gap-3">
-                <button onclick="closeModal('confirm-modal')" class="px-4 py-2 text-gray-600 dark:text-gray-300 font-medium hover:bg-gray-100 dark:hover:bg-slate-700 rounded-xl transition-colors">חזור</button>
-                <button id="confirm-action-btn" class="px-4 py-2 bg-red-600 text-white font-medium hover:bg-red-700 rounded-xl shadow-md transition-colors">כן, בטל משימה</button>
+                <button onclick="window.closeModal('confirm-modal')" class="px-4 py-2 text-gray-600 dark:text-gray-300 font-medium hover:bg-gray-100 dark:hover:bg-slate-700 rounded-xl transition-colors">ביטול</button>
+                <button id="confirm-action-btn" class="px-4 py-2 bg-red-600 text-white font-medium hover:bg-red-700 rounded-xl shadow-md transition-colors">כן, אשר</button>
             </div>
         </div>
     </div>
@@ -443,227 +415,489 @@
     <div id="toast-container" class="fixed bottom-4 right-4 z-[120] flex flex-col gap-2 pointer-events-none"></div>
 
     <script>
-        // --- Core State & Variables ---
+        // --- Multi-User Core State & Variables ---
+        window.globalDB = {
+            users: [], workspaces: {}, settings: {}
+        };
+        window.currentUser = null;
+
         window.appState = {
             tasks: [], quickTasks: [], categories: [], quotesPrefs: [],
-            currentView: 'dashboard', theme: localStorage.getItem('theme') || 'light', filterText: '', geminiChatHistory: []
+            currentView: 'dashboard', theme: localStorage.getItem('theme') || 'light', filterText: '', geminiChatHistory: [],
+            showClock: localStorage.getItem('show_clock') !== 'false'
         };
+        
         window.tasksViewMode = 'list';
-        let tempSubtasks = []; let tempAttachments = []; let currentEditingTaskId = null; let actionToConfirm = null;
-        let pomodoroInterval = null; let pomodoroTimeLeft = 1500; let currentPomodoroTask = null;
-        let syncTimeout = null; let miniCalDate = new Date();
-        const HARDCODED_DRIVE_URL = "https://script.google.com/macros/s/AKfycbyZKoG_PCD8hy9r47rRynz5TaC8d51fHI79v8agj7DPvpbapTJoPng899jGURq8ZYhR/exec";
+        window.tempSubtasks = []; 
+        window.tempAttachments = []; 
+        window.currentEditingTaskId = null; 
+        window.actionToConfirm = null;
+        window.pomodoroInterval = null; 
+        window.pomodoroTimeLeft = 1500; 
+        window.currentPomodoroTask = null;
+        window.miniCalDate = new Date();
+        window.mainCalendarInstance = null;
+        window.syncTimeout = null;
+        
+        // הגדרות ברירת מחדל מוטמעות
+        window.HARDCODED_GEMINI_API_KEY = "AQ.Ab8RN6LsFR0lFdlw7hjnljAvWHf_PPLgqUgGmPw6cZf5N4FYYQ"; 
+        window.HARDCODED_DRIVE_URL = "https://script.google.com/macros/s/AKfycbyZKoG_PCD8hy9r47rRynz5TaC8d51fHI79v8agj7DPvpbapTJoPng899jGURq8ZYhR/exec";
 
         window.quotesList = [
             { id: 'q1', text: "הדמיון חשוב יותר מהידע. הידע מוגבל, אך הדמיון חובק עולם.", author: "אלברט איינשטיין" },
             { id: 'q2', text: "הצלחה היא היכולת לעבור מכישלון לכישלון מבלי לאבד את ההתלהבות.", author: "וינסטון צ'רצ'יל" },
-            { id: 'q3', text: "אם אתה יכול לחלום את זה, אתה יכול לעשות את זה.", author: "וולט דיסני" },
-            { id: 'q4', text: "הדרך הטובה ביותר לחזות את העתיד היא ליצור אותו.", author: "פיטר דרוקר" },
-            { id: 'q5', text: "אל תפחד לוותר על הטוב כדי ללכת על המצוין.", author: "ג'ון ד. רוקפלר" },
-            { id: 'q6', text: "אני לא נכשלתי. פשוט מצאתי 10,000 דרכים שלא עובדות.", author: "תומס אדיסון" },
-            { id: 'q7', text: "תחשוב כאילו אתה יכול, ואתה כבר בחצי הדרך לשם.", author: "תיאודור רוזוולט" },
-            { id: 'q8', text: "הזמן שלך מוגבל, אל תבזבז אותו בלחיות חיים של מישהו אחר.", author: "סטיב ג'ובס" }
+            { id: 'q3', text: "אם אתה יכול לחלום את זה, אתה יכול לעשות את זה.", author: "וולט דיסני" }
         ];
 
-        const colorMap = {
+        window.colorMap = {
             'pastel-blue': 'bg-blue-100 text-blue-800 border-blue-200', 'pastel-green': 'bg-green-100 text-green-800 border-green-200',
             'pastel-yellow': 'bg-yellow-100 text-yellow-800 border-yellow-200', 'pastel-pink': 'bg-pink-100 text-pink-800 border-pink-200',
             'pastel-purple': 'bg-purple-100 text-purple-800 border-purple-200', 'pastel-orange': 'bg-orange-100 text-orange-800 border-orange-200',
             'pastel-red': 'bg-red-100 text-red-800 border-red-200',
         };
 
-        const bgMapDark = {
+        window.bgMapDark = {
             'pastel-blue': 'dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800', 'pastel-green': 'dark:bg-green-900/30 dark:text-green-300 dark:border-green-800',
             'pastel-yellow': 'dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-800', 'pastel-pink': 'dark:bg-pink-900/30 dark:text-pink-300 dark:border-pink-800',
             'pastel-purple': 'dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-800', 'pastel-orange': 'dark:bg-orange-900/30 dark:text-orange-300 dark:border-orange-800',
             'pastel-red': 'dark:bg-red-900/30 dark:text-red-300 dark:border-red-800',
         };
 
-        // --- Data & Sync Functions ---
-        window.saveToLocalStorage = function() {
-            localStorage.setItem('taskmaster_data', JSON.stringify({
-                tasks: window.appState.tasks, quickTasks: window.appState.quickTasks, categories: window.appState.categories, quotesPrefs: window.appState.quotesPrefs
-            }));
-            if(typeof renderCurrentView === 'function') renderCurrentView();
-            if(typeof updateSidebarBadges === 'function') updateSidebarBadges();
-            if(window.triggerDriveSync) window.triggerDriveSync();
-        };
-
-        window.loadFromLocalStorage = function() {
-            try {
-                const data = localStorage.getItem('taskmaster_data');
-                if (data) {
-                    const parsed = JSON.parse(data);
-                    window.appState.tasks = parsed.tasks || [];
-                    window.appState.quickTasks = parsed.quickTasks || [];
-                    window.appState.categories = parsed.categories || [];
-                    window.appState.quotesPrefs = parsed.quotesPrefs || [];
+        // --- Database Initialization & Sync Logic ---
+        window.initDB = function() {
+            let dataStr = localStorage.getItem('taskmaster_data');
+            let data = dataStr ? JSON.parse(dataStr) : null;
+            
+            if (!data || !data.users) {
+                window.globalDB = {
+                    users: [{ username: 'LIORACH', password: 'Lior@99', role: 'admin' }],
+                    workspaces: {
+                        'LIORACH': data || { tasks: [], quickTasks: [], categories: [], quotesPrefs: [] }
+                    },
+                    settings: { shareLink: '', driveUrl: '', apiKey: '' }
+                };
+            } else {
+                window.globalDB = data;
+                if(!window.globalDB.settings) window.globalDB.settings = { shareLink: '', driveUrl: '', apiKey: '' };
+                if (!window.globalDB.users.find(u => u.username === 'LIORACH')) {
+                    window.globalDB.users.push({ username: 'LIORACH', password: 'Lior@99', role: 'admin' });
+                    window.globalDB.workspaces['LIORACH'] = { tasks: [], quickTasks: [], categories: [], quotesPrefs: [] };
                 }
-            } catch(e) { console.error("Error loading local storage:", e); }
-            setTimeout(window.checkDriveConnection, 500);
-        };
-
-        window.injectDemoDataLocal = function() {
-            if (localStorage.getItem('demoTasksLoaded') === 'true') return;
-            const now = new Date(); const tmrw = new Date(now.getTime() + 86400000); const crit = new Date(now.getTime() + 2*3600000);
-            const fDate = (d) => new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0,16);
-
-            window.appState.categories = [
-                {id:'c1', name:'עבודה', color:'pastel-blue'}, {id:'c2', name:'אישי', color:'pastel-pink'},
-                {id:'c3', name:'פרויקטים', color:'pastel-purple'}, {id:'c4', name:'קריאות', color:'pastel-orange'}, {id:'c5', name:'קריטי', color:'pastel-red'}
-            ];
-
-            window.appState.tasks = [
-                { id: 't1', title: 'השקת פרויקט מרכזי', description: 'לסיים בדיקות אחרונות לפני עלייה לאוויר', dueDate: fDate(tmrw), status: 'active', categoryId: 'c3', priority: 'high', subtasks: [{title:'בדיקות עומסים', done:true}, {title:'אישור מנהל', done:false}], attachments: [], createdAt: new Date().toISOString() },
-                { id: 't2', title: 'הגשת דוחות חודשיים', description: 'לרכז את כל נתוני המכירות וההוצאות של החודש האחרון', dueDate: fDate(new Date(now.getTime() + 5*86400000)), status: 'active', categoryId: 'c1', priority: 'medium', subtasks: [], attachments: [], createdAt: new Date().toISOString() },
-                { id: 't3', title: 'קניות שבועיות לבית', description: 'חלב, לחם, ביצים, ירקות ופירות', dueDate: fDate(now), status: 'active', categoryId: 'c2', priority: 'low', subtasks: [], attachments: [], createdAt: new Date().toISOString() },
-                { id: 't4', title: 'לקרוא את המאמר על בינה מלאכותית', description: 'מאמר חשוב להתפתחות מקצועית שנשלח במייל', dueDate: fDate(new Date(now.getTime() + 2*86400000)), status: 'active', categoryId: 'c4', priority: 'low', subtasks: [], attachments: [], createdAt: new Date().toISOString() },
-                { id: 't5', title: 'תקלת שרת חמורה - לטפל מיד!', description: 'השרת נופל בעומס, יש להפעיל כלי ניטור ולטפל', dueDate: fDate(crit), status: 'active', categoryId: 'c5', priority: 'high', subtasks: [], attachments: [], createdAt: new Date().toISOString() }
-            ];
-
-            window.appState.quickTasks = [
-                {id: 'qt1', title: 'להתקשר לרואה חשבון', desc: 'לשאול לגבי חשבונית אחרונה', status: 'active', createdAt: new Date().toISOString()},
-                {id: 'qt2', title: 'לשלם חשבון חשמל', desc: 'עד ה-15 לחודש!', status: 'active', createdAt: new Date().toISOString()},
-                {id: 'qt3', title: 'לקבוע תור לרופא עיניים', desc: 'במרפאה החדשה', status: 'active', createdAt: new Date().toISOString()}
-            ];
-
-            window.saveToLocalStorage();
-            localStorage.setItem('demoTasksLoaded', 'true');
-        };
-
-        window.dbActions = {
-            addTask(taskData) {
-                taskData.id = 't_' + Date.now(); taskData.createdAt = new Date().toISOString(); taskData.status = 'active';
-                window.appState.tasks.push(taskData); window.saveToLocalStorage(); showToast('המשימה נוספה בהצלחה', 'success');
-            },
-            updateTask(taskId, updates) {
-                const idx = window.appState.tasks.findIndex(t => t.id === taskId);
-                if (idx > -1) { window.appState.tasks[idx] = { ...window.appState.tasks[idx], ...updates }; window.saveToLocalStorage(); showToast('עודכן בהצלחה', 'success'); }
-            },
-            addQuickTask(data) {
-                data.id = 'qt_' + Date.now(); data.createdAt = new Date().toISOString(); data.status = 'active';
-                window.appState.quickTasks.push(data); window.saveToLocalStorage(); showToast('משימה מהירה נוספה', 'success');
-            },
-            updateQuickTask(taskId, updates) {
-                const idx = window.appState.quickTasks.findIndex(t => t.id === taskId);
-                if (idx > -1) { window.appState.quickTasks[idx] = { ...window.appState.quickTasks[idx], ...updates }; window.saveToLocalStorage(); }
-            },
-            addCategory(data) {
-                data.id = 'c_' + Date.now(); window.appState.categories.push(data); window.saveToLocalStorage(); showToast('קטגוריה נוספה', 'success');
-                return { id: data.id };
-            },
-            deleteCategory(id) {
-                window.appState.categories = window.appState.categories.filter(c => c.id !== id); window.saveToLocalStorage(); showToast('קטגוריה נמחקה', 'success');
-            },
-            setQuotePref(quoteId, status) {
-                const existing = window.appState.quotesPrefs.findIndex(q => q.quoteId === quoteId);
-                if (existing > -1) { window.appState.quotesPrefs[existing].status = status; window.appState.quotesPrefs[existing].updatedAt = new Date().toISOString(); } 
-                else { window.appState.quotesPrefs.push({ quoteId, status, updatedAt: new Date().toISOString() }); }
-                window.saveToLocalStorage();
             }
+        };
+
+        window.getDriveUrl = function() {
+            return window.globalDB?.settings?.driveUrl || window.HARDCODED_DRIVE_URL;
         };
 
         window.checkDriveConnection = function() {
-            const url = localStorage.getItem('taskmaster_drive_url');
-            if (url) {
-                document.getElementById('cloud-status-indicator').classList.remove('hidden');
-                document.getElementById('cloud-status-indicator').classList.add('flex');
-                document.getElementById('btn-force-sync').style.display = 'flex';
-                document.getElementById('drive-url-input').value = url;
-                document.getElementById('btn-connect-drive').classList.add('hidden');
-                document.getElementById('drive-connected-msg').classList.remove('hidden');
-                document.getElementById('btn-disconnect-drive').classList.remove('hidden');
-                if (!window.initialDriveLoadDone) { window.initialDriveLoadDone = true; window.forceSyncFromDrive(true); }
+            const url = window.getDriveUrl();
+            if (url && url !== "") {
+                const indicator = document.getElementById('cloud-status-indicator');
+                if(indicator) { indicator.classList.remove('hidden'); indicator.classList.add('flex'); }
+                
+                const forceBtn = document.getElementById('btn-force-sync');
+                if(forceBtn) forceBtn.style.display = 'flex';
+                
+                const urlInput = document.getElementById('drive-url-input');
+                if(urlInput) urlInput.value = url;
+                
+                const connectBtn = document.getElementById('btn-connect-drive');
+                if(connectBtn) connectBtn.classList.add('hidden');
+                
+                const connMsg = document.getElementById('drive-connected-msg');
+                if(connMsg) connMsg.classList.remove('hidden');
+                
+                const disconnBtn = document.getElementById('btn-disconnect-drive');
+                if(disconnBtn) disconnBtn.classList.remove('hidden');
             }
         };
 
-        window.connectDrive = async function() {
-            const url = document.getElementById('drive-url-input').value.trim();
-            if (!url || !url.includes('script.google.com')) { showToast('אנא הזן כתובת תקינה של Google Apps Script', 'error'); return; }
-            const btn = document.getElementById('btn-connect-drive');
-            const ogHtml = btn.innerHTML; btn.innerHTML = '<i class="ph ph-spinner animate-spin"></i> מתחבר...'; btn.disabled = true;
-            try {
-                const res = await fetch(url);
-                if (res.ok) {
-                    const data = await res.json();
-                    localStorage.setItem('taskmaster_drive_url', url);
-                    if (data && (data.tasks || data.categories)) {
-                        localStorage.setItem('taskmaster_data', JSON.stringify(data));
-                        window.loadFromLocalStorage(); renderCurrentView(); updateSidebarBadges();
-                        showToast('חובר בהצלחה! נתונים נמשכו מהדרייב.', 'success');
-                    } else {
-                        showToast('חובר בהצלחה! מסנכרן נתונים ראשוניים לדרייב...', 'info');
-                        window.triggerDriveSync(true);
-                    }
-                    window.checkDriveConnection();
-                    setTimeout(() => closeModal('sync-modal'), 1500);
-                } else throw new Error('Network error');
-            } catch (e) { console.error(e); showToast('שגיאה בהתחברות לדרייב.', 'error'); } 
-            finally { btn.innerHTML = ogHtml; btn.disabled = false; }
-        };
-
         window.disconnectDrive = function() {
-            localStorage.removeItem('taskmaster_drive_url');
+            if(window.globalDB.settings) window.globalDB.settings.driveUrl = "";
+            window.saveToLocalStorage(false);
+            
             document.getElementById('drive-url-input').value = '';
             document.getElementById('btn-connect-drive').classList.remove('hidden');
             document.getElementById('drive-connected-msg').classList.add('hidden');
             document.getElementById('btn-disconnect-drive').classList.add('hidden');
-            document.getElementById('cloud-status-indicator').classList.add('hidden');
-            document.getElementById('cloud-status-indicator').classList.remove('flex');
-            document.getElementById('btn-force-sync').style.display = 'none';
-            showToast('הסנכרון לדרייב נותק.', 'info');
-        };
-
-        window.triggerDriveSync = function(immediate = false) {
-            const url = localStorage.getItem('taskmaster_drive_url');
-            if (!url) return;
-            const icon = document.getElementById('cloud-sync-icon');
-            if(icon) icon.className = 'ph ph-arrows-clockwise text-lg animate-spin';
-            clearTimeout(syncTimeout);
-            const doSync = async () => {
-                try {
-                    const data = localStorage.getItem('taskmaster_data') || '{}';
-                    await fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: data });
-                    if(icon) icon.className = 'ph ph-cloud-check text-lg';
-                } catch (e) { console.error(e); if(icon) icon.className = 'ph ph-cloud-warning text-lg text-red-500'; }
-            };
-            if (immediate) doSync(); else syncTimeout = setTimeout(doSync, 2000);
+            
+            const indicator = document.getElementById('cloud-status-indicator');
+            if(indicator) { indicator.classList.add('hidden'); indicator.classList.remove('flex'); }
+            
+            const forceBtn = document.getElementById('btn-force-sync');
+            if(forceBtn) forceBtn.style.display = 'none';
+            
+            window.showToast('הסנכרון לדרייב נותק.', 'info');
         };
 
         window.forceSyncFromDrive = async function(silent = false) {
-            const url = localStorage.getItem('taskmaster_drive_url');
+            const url = window.getDriveUrl();
             if (!url) return;
 
             const icon = document.getElementById('cloud-sync-icon');
             if(icon) icon.className = 'ph ph-arrows-clockwise text-lg animate-spin';
-            if (!silent) showToast('שואב נתונים...', 'info');
+            if (!silent) window.showToast('שואב נתונים מהענן...', 'info');
 
             try {
                 const res = await fetch(url);
                 if (res.ok) {
-                    const data = await res.json();
-                    if (data && Object.keys(data).length > 0) {
-                        localStorage.setItem('taskmaster_data', JSON.stringify(data));
-                        window.appState.tasks = data.tasks || [];
-                        window.appState.quickTasks = data.quickTasks || [];
-                        window.appState.categories = data.categories || [];
-                        window.appState.quotesPrefs = data.quotesPrefs || [];
-                        renderCurrentView();
-                        updateSidebarBadges();
-                        if (!silent) showToast('הסנכרון הושלם', 'success');
+                    let textData = await res.text();
+                    let data;
+                    try { data = JSON.parse(textData); } catch(e) { throw new Error("Invalid JSON"); }
+                    
+                    let needsPush = false;
+                    
+                    if (data && data.users && data.workspaces) {
+                        window.globalDB = data;
+                    } else if (data) {
+                        // גיבוי נוסף: מנסה לחלץ נתונים במבנה ישן
+                        let tempTasks = [];
+                        let tempCats = [];
+                        let tempQuick = [];
+                        let tempQuotes = [];
+                        
+                        if (Array.isArray(data)) {
+                            tempTasks = data;
+                        } else if (data.tasks || data.categories) {
+                            tempTasks = data.tasks || [];
+                            tempCats = data.categories || [];
+                            tempQuick = data.quickTasks || [];
+                            tempQuotes = data.quotesPrefs || [];
+                        } else if (data.data) {
+                            tempTasks = data.data.tasks || [];
+                            tempCats = data.data.categories || [];
+                            tempQuick = data.data.quickTasks || [];
+                        }
+                        
+                        if (tempCats.length === 0) {
+                            tempCats = [
+                                {id:'c1', name:'עבודה', color:'pastel-blue'}, 
+                                {id:'c2', name:'אישי', color:'pastel-pink'}
+                            ];
+                        }
+                        
+                        window.globalDB = {
+                            users: [{ username: 'LIORACH', password: 'Lior@99', role: 'admin' }],
+                            workspaces: { 
+                                'LIORACH': { tasks: tempTasks, quickTasks: tempQuick, categories: tempCats, quotesPrefs: tempQuotes } 
+                            },
+                            settings: window.globalDB.settings || { shareLink: '', driveUrl: window.HARDCODED_DRIVE_URL, apiKey: '' }
+                        };
+                        needsPush = true;
                     }
+                    
+                    window.saveToLocalStorage(needsPush);
+                    if(window.currentUser) {
+                        window.loadWorkspace(window.currentUser);
+                    }
+                    if (!silent) window.showToast('הסנכרון הושלם בהצלחה', 'success');
                 }
                 if(icon) icon.className = 'ph ph-cloud-check text-lg';
             } catch (e) {
-                if (!silent) showToast('שגיאה בשאיבת נתונים', 'error');
+                if (!silent) window.showToast('שגיאה בשאיבת נתונים מ-Drive', 'error');
                 if(icon) icon.className = 'ph ph-cloud-warning text-lg text-red-500';
             }
-        }
+        };
 
-        // Navigation
+        window.connectDrive = async function() {
+            const urlInput = document.getElementById('drive-url-input');
+            const url = (urlInput && urlInput.value.trim() !== '') ? urlInput.value.trim() : window.getDriveUrl();
+            if(!url) return;
+            
+            if(urlInput && urlInput.value.trim() !== '') {
+                if(!window.globalDB.settings) window.globalDB.settings = {};
+                window.globalDB.settings.driveUrl = url;
+                window.saveToLocalStorage(false);
+                window.checkDriveConnection();
+            }
+            
+            const syncStatusEl = document.getElementById('login-sync-status');
+            if(syncStatusEl) syncStatusEl.innerHTML = '<i class="ph ph-spinner animate-spin"></i> מסנכרן מול הדרייב...';
+            
+            const btnConnect = document.getElementById('btn-connect-drive');
+            let ogHtml = '';
+            if(btnConnect) {
+                ogHtml = btnConnect.innerHTML; 
+                btnConnect.innerHTML = '<i class="ph ph-spinner animate-spin"></i> מתחבר...'; 
+                btnConnect.disabled = true;
+            }
+
+            try {
+                const res = await fetch(url);
+                if (res.ok) {
+                    let textData = await res.text();
+                    let data;
+                    try { data = JSON.parse(textData); } catch(e) { throw new Error("Invalid JSON"); }
+                    
+                    let needsPush = false;
+                    
+                    if (data && data.users && data.workspaces) {
+                        window.globalDB = data;
+                    } else if (data) {
+                        let tempTasks = [];
+                        let tempCats = [];
+                        let tempQuick = [];
+                        let tempQuotes = [];
+                        
+                        if (Array.isArray(data)) {
+                            tempTasks = data;
+                        } else if (data.tasks || data.categories) {
+                            tempTasks = data.tasks || [];
+                            tempCats = data.categories || [];
+                            tempQuick = data.quickTasks || [];
+                            tempQuotes = data.quotesPrefs || [];
+                        } else if (data.data) {
+                            tempTasks = data.data.tasks || [];
+                            tempCats = data.data.categories || [];
+                        }
+                        
+                        if (tempCats.length === 0) {
+                            tempCats = [{id:'c1', name:'עבודה', color:'pastel-blue'}, {id:'c2', name:'אישי', color:'pastel-pink'}];
+                        }
+                        
+                        window.globalDB = {
+                            users: [{ username: 'LIORACH', password: 'Lior@99', role: 'admin' }],
+                            workspaces: { 
+                                'LIORACH': { tasks: tempTasks, quickTasks: tempQuick, categories: tempCats, quotesPrefs: tempQuotes } 
+                            },
+                            settings: window.globalDB.settings || { shareLink: '', driveUrl: window.HARDCODED_DRIVE_URL, apiKey: '' }
+                        };
+                        needsPush = true; // נדרש לדחוף את השדרוג חזרה לענן
+                    }
+                    
+                    window.saveToLocalStorage(needsPush); // שומר לוקאלית ודוחף לענן אם היתה המרה
+                    if(syncStatusEl) syncStatusEl.innerHTML = '<i class="ph ph-check-circle text-green-500"></i> נתונים מעודכנים ומוכנים';
+                    
+                    // אם המשתמש כבר מחובר, נרענן את התצוגה שלו
+                    if(window.currentUser) {
+                        window.loadWorkspace(window.currentUser);
+                    }
+                    
+                    if(btnConnect) {
+                        window.showToast('הסנכרון הוגדר בהצלחה', 'success');
+                        setTimeout(() => window.closeModal('sync-modal'), 1000);
+                    }
+                } else {
+                    if(syncStatusEl) syncStatusEl.innerHTML = '<i class="ph ph-check-circle text-gray-500"></i> עובד במצב מקומי';
+                }
+            } catch (e) { 
+                console.error("Sync Error", e); 
+                if(syncStatusEl) syncStatusEl.innerHTML = '<i class="ph ph-warning-circle text-red-500"></i> עובד במצב מקומי (שגיאת רשת)';
+                if(btnConnect) window.showToast('שגיאה בחיבור לדרייב.', 'error');
+            } finally {
+                if(btnConnect) {
+                    btnConnect.innerHTML = ogHtml; 
+                    btnConnect.disabled = false;
+                }
+            }
+        };
+
+        window.triggerDriveSync = function(immediate = false) {
+            const url = window.getDriveUrl();
+            if(!url) return;
+            clearTimeout(window.syncTimeout);
+            const doSync = async () => {
+                try {
+                    await fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(window.globalDB) });
+                } catch (e) { console.error("Error pushing to drive:", e); }
+            };
+            if (immediate) doSync(); else window.syncTimeout = setTimeout(doSync, 2000);
+        };
+
+        window.loadWorkspace = function(username) {
+            window.currentUser = username;
+            
+            if (!window.globalDB.workspaces[username]) {
+                window.globalDB.workspaces[username] = { tasks: [], quickTasks: [], categories: [], quotesPrefs: [] };
+            }
+            
+            const ws = window.globalDB.workspaces[username];
+            window.appState.tasks = ws.tasks || [];
+            window.appState.quickTasks = ws.quickTasks || [];
+            window.appState.categories = ws.categories || [];
+            window.appState.quotesPrefs = ws.quotesPrefs || [];
+            window.appState.geminiChatHistory = [];
+            window.appState.filterText = '';
+            
+            document.getElementById('welcome-user').innerText = `מחובר כ- ${username}`;
+            const navUsers = document.getElementById('nav-users');
+            const role = window.globalDB.users.find(u => u.username === username)?.role;
+            if(navUsers) navUsers.style.display = (role === 'admin' || username === 'LIORACH') ? 'flex' : 'none';
+
+            window.navigate('dashboard');
+        };
+
+        window.saveToLocalStorage = function(triggerSync = true) {
+            if (window.currentUser && window.globalDB) {
+                window.globalDB.workspaces[window.currentUser] = {
+                    tasks: window.appState.tasks,
+                    quickTasks: window.appState.quickTasks,
+                    categories: window.appState.categories,
+                    quotesPrefs: window.appState.quotesPrefs
+                };
+            }
+            localStorage.setItem('taskmaster_data', JSON.stringify(window.globalDB));
+            if(typeof window.renderCurrentView === 'function') window.renderCurrentView();
+            if(typeof window.updateSidebarBadges === 'function') window.updateSidebarBadges();
+            if(triggerSync && window.triggerDriveSync) window.triggerDriveSync();
+        };
+
+        // --- Security & Login ---
+        window.checkLogin = function() {
+            const loggedInUser = sessionStorage.getItem("taskmaster_user");
+            if (!loggedInUser) {
+                document.getElementById('login-screen').classList.remove('hidden');
+                document.getElementById('login-screen').classList.add('flex');
+                document.getElementById('login-screen').style.opacity = '1';
+                document.getElementById('login-pass').value = '';
+            } else {
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('login-screen').classList.remove('flex');
+                window.loadWorkspace(loggedInUser);
+            }
+        };
+
+        window.handleLogin = function(e) {
+            e.preventDefault();
+            const u = document.getElementById('login-user').value.trim();
+            const p = document.getElementById('login-pass').value;
+            
+            const user = window.globalDB.users.find(x => x.username.toLowerCase() === u.toLowerCase() && x.password === p);
+            
+            if (user) {
+                sessionStorage.setItem("taskmaster_user", user.username);
+                document.getElementById('login-error').classList.add('hidden');
+                document.getElementById('login-screen').style.opacity = '0';
+                
+                setTimeout(() => { 
+                    document.getElementById('login-screen').classList.add('hidden');
+                    document.getElementById('login-screen').classList.remove('flex');
+                    window.loadWorkspace(user.username);
+                    window.showToast(`ברוך הבא, ${user.username}!`, "success");
+                }, 500);
+            } else {
+                document.getElementById('login-error').classList.remove('hidden');
+                document.getElementById('login-pass').value = '';
+            }
+        };
+
+        window.logout = function() {
+            sessionStorage.removeItem("taskmaster_user");
+            window.currentUser = null;
+            window.checkLogin();
+            window.showToast("התנתקת בהצלחה.", "info");
+        };
+
+        // --- Clock & Utils ---
+        window.updateClock = function() {
+            const clockEl = document.getElementById('header-clock');
+            if(clockEl && window.appState.showClock) {
+                const now = new Date();
+                const hrs = now.getHours().toString().padStart(2, '0');
+                const mins = now.getMinutes().toString().padStart(2, '0');
+                clockEl.innerText = `${hrs}:${mins}`;
+            }
+        };
+        setInterval(window.updateClock, 1000);
+
+        window.toggleClock = function() {
+            window.appState.showClock = !window.appState.showClock;
+            localStorage.setItem('show_clock', window.appState.showClock);
+            const clockEl = document.getElementById('header-clock');
+            if(window.appState.showClock) {
+                clockEl.classList.remove('hidden');
+                window.updateClock();
+            } else {
+                clockEl.classList.add('hidden');
+            }
+        };
+
+        window.updateSidebarBadges = function() {
+            const activeCount = window.appState.tasks.filter(t=>t.status==='active').length;
+            const badge = document.getElementById('badge-active');
+            if(badge) { 
+                if(activeCount > 0) { 
+                    badge.innerText = activeCount; 
+                    badge.classList.remove('hidden'); 
+                } else {
+                    badge.classList.add('hidden'); 
+                }
+            }
+        };
+
+        window.showToast = function(msg, type='info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const colors = type==='success' ? 'bg-green-500' : type==='error' ? 'bg-red-500' : 'bg-gray-800';
+            toast.className = `${colors} text-white px-4 py-3 rounded-xl shadow-lg flex items-center gap-3 transform translate-y-10 opacity-0 transition-all duration-300 z-50`;
+            toast.innerHTML = `<i class="ph ph-info font-bold text-lg"></i> <span>${msg}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.remove('translate-y-10', 'opacity-0'), 10);
+            setTimeout(() => { toast.classList.add('opacity-0'); setTimeout(() => toast.remove(), 300); }, 3000);
+        };
+
+        window.toggleSidebar = function() {
+            document.getElementById('sidebar').classList.toggle('translate-x-full');
+            document.getElementById('sidebar-overlay').classList.toggle('hidden');
+        };
+
+        window.toggleTheme = function() {
+            const html = document.documentElement;
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark'); localStorage.setItem('theme', 'light'); window.appState.theme = 'light';
+            } else {
+                html.classList.add('dark'); localStorage.setItem('theme', 'dark'); window.appState.theme = 'dark';
+            }
+            if(window.appState.currentView === 'reports') window.renderCurrentView();
+        };
+
+        window.getDailyQuote = function() {
+            const today = new Date();
+            const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
+            return window.quotesList[dayOfYear % window.quotesList.length];
+        };
+
+        window.generateICSFile = function(task) {
+            const startDate = new Date(task.dueDate);
+            const endDate = new Date(startDate.getTime() + 60 * 60 * 1000); 
+            const formatDate = (date) => date.toISOString().replace(/-|:|\.\d+/g, '');
+            const icsData = `BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//TaskMaster//IL\nBEGIN:VEVENT\nDTSTART:${formatDate(startDate)}\nDTEND:${formatDate(endDate)}\nSUMMARY:${task.title}\nDESCRIPTION:${task.description || ''}\nEND:VEVENT\nEND:VCALENDAR`;
+            const blob = new Blob([icsData], { type: 'text/calendar;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a'); link.href = url; link.download = `Task_${task.title.replace(/\s+/g, '_')}.ics`;
+            document.body.appendChild(link); link.click(); document.body.removeChild(link);
+            setTimeout(() => window.showToast('קובץ יומן (Outlook) הורד', 'info'), 1000);
+        };
+
+        window.exportData = function(type) {
+            window.showToast(`מכין ייצוא ל-${type.toUpperCase()}...`, 'info');
+            const activeTasks = window.appState.tasks.filter(t=>t.status==='active').map(t => ({
+                'שם משימה': t.title, 'תאריך יעד': new Date(t.dueDate).toLocaleString('he-IL'), 'דחיפות': t.priority === 'high'?'גבוהה':t.priority==='medium'?'בינונית':'נמוכה', 'תיאור': t.description || ''
+            }));
+            if(type === 'excel') {
+                const ws = XLSX.utils.json_to_sheet(activeTasks); ws['!dir'] = 'rtl';
+                const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Tasks");
+                XLSX.writeFile(wb, "TaskMaster_Export.xlsx");
+            } 
+            else if (type === 'pdf') {
+                const opt = { margin: 1, filename: 'TaskMaster_Export.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' } };
+                html2pdf().set(opt).from(document.getElementById('main-content')).save();
+            }
+            else if (type === 'word') {
+                let tableHtml = `<html dir="rtl"><head><meta charset="utf-8"></head><body><h1>משימות TaskMaster</h1><table border="1" style="width:100%; border-collapse:collapse;"><tr><th>שם משימה</th><th>תאריך יעד</th><th>דחיפות</th><th>תיאור</th></tr>`;
+                activeTasks.forEach(t => tableHtml += `<tr><td>${t['שם משימה']}</td><td>${t['תאריך יעד']}</td><td>${t['דחיפות']}</td><td>${t['תיאור']}</td></tr>`);
+                tableHtml += `</table></body></html>`;
+                const blob = new Blob(['\ufeff', tableHtml], { type: 'application/msword' });
+                const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = 'TaskMaster_Export.doc';
+                document.body.appendChild(link); link.click(); document.body.removeChild(link);
+            }
+        };
+
+        // --- Navigation ---
         window.navigate = function(view) {
             window.appState.currentView = view;
-            window.appState.filterText = ''; // reset filter on navigate
+            window.appState.filterText = ''; 
             const filterInput = document.querySelector('input[placeholder="סינון (משימה או קטגוריה)..."]');
             if(filterInput) filterInput.value = '';
 
@@ -677,12 +911,12 @@
                 }
             });
 
-            const titles = { dashboard: 'דאשבורד', tasks: 'כל המשימות', kanban: 'לוח קנבן', quotes: 'ציטוטים', archive: 'ארכיון', reports: 'דוחות', categories: 'הגדרת קטגוריות' };
+            const titles = { dashboard: 'דאשבורד', tasks: 'כל המשימות', kanban: 'לוח קנבן', quotes: 'ציטוטים', archive: 'ארכיון', reports: 'דוחות', categories: 'הגדרת קטגוריות', users: 'ניהול משתמשים' };
             const titleEl = document.getElementById('page-title');
             if(titleEl) titleEl.innerText = titles[view] || '';
 
-            if(window.innerWidth < 768) toggleSidebar();
-            renderCurrentView();
+            if(window.innerWidth < 768) window.toggleSidebar();
+            window.renderCurrentView();
         };
 
         window.renderCurrentView = function() {
@@ -690,32 +924,33 @@
             if(!main) return;
             const v = window.appState.currentView;
             if(v === 'dashboard') {
-                main.innerHTML = getDashboardHTML();
+                main.innerHTML = window.getDashboardHTML();
                 setTimeout(window.renderMiniCalendar, 0);
             }
-            else if(v === 'tasks') main.innerHTML = getTasksHTML();
-            else if(v === 'kanban') main.innerHTML = getKanbanHTML();
-            else if(v === 'archive') main.innerHTML = getArchiveHTML();
-            else if(v === 'quotes') main.innerHTML = getQuotesHTML();
-            else if(v === 'reports') { main.innerHTML = getReportsHTML(); setTimeout(initCharts,100); }
-            else if(v === 'categories') main.innerHTML = getCategoriesHTML();
+            else if(v === 'tasks') main.innerHTML = window.getTasksHTML();
+            else if(v === 'kanban') main.innerHTML = window.getKanbanHTML();
+            else if(v === 'archive') main.innerHTML = window.getArchiveHTML();
+            else if(v === 'quotes') main.innerHTML = window.getQuotesHTML();
+            else if(v === 'reports') { main.innerHTML = window.getReportsHTML(); setTimeout(window.initCharts,100); }
+            else if(v === 'categories') main.innerHTML = window.getCategoriesHTML();
+            else if(v === 'users') main.innerHTML = window.getUsersHTML();
             
-            if(v === 'tasks' && window.tasksViewMode === 'calendar') setTimeout(initCalendar, 50);
-            updateSidebarBadges();
+            if(v === 'tasks' && window.tasksViewMode === 'calendar') setTimeout(window.initCalendar, 50);
+            window.updateSidebarBadges();
         };
 
         window.setFilter = function(val) {
             window.appState.filterText = val.toLowerCase();
-            renderCurrentView();
-        }
+            window.renderCurrentView();
+        };
 
-        // Mini Calendar Logic
+        // --- Mini Calendar Logic ---
         window.renderMiniCalendar = function() {
             const container = document.getElementById('mini-calendar-container');
             if(!container) return;
 
-            const year = miniCalDate.getFullYear();
-            const month = miniCalDate.getMonth();
+            const year = window.miniCalDate.getFullYear();
+            const month = window.miniCalDate.getMonth();
             const firstDay = new Date(year, month, 1).getDay(); 
             const daysInMonth = new Date(year, month + 1, 0).getDate();
             const monthNames = ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"];
@@ -741,6 +976,7 @@
 
             for(let d=1; d<=daysInMonth; d++) {
                 const isToday = d === today.getDate() && month === today.getMonth() && year === today.getFullYear();
+                
                 const hasTasks = tasks.some(t => {
                     const tDate = new Date(t.dueDate);
                     return tDate.getDate() === d && tDate.getMonth() === month && tDate.getFullYear() === year;
@@ -749,17 +985,17 @@
                 let dayClass = "w-9 h-9 mx-auto flex flex-col items-center justify-center rounded-xl text-[15px] font-medium transition-colors cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 relative text-slate-700 dark:text-slate-200";
                 if(isToday) dayClass = "w-9 h-9 mx-auto flex flex-col items-center justify-center rounded-xl text-[15px] font-bold bg-[#f0f6ff] text-slate-900 dark:bg-brand-900/40 dark:text-white relative cursor-pointer";
 
-                const dotHtml = hasTasks ? `<div class="w-1.5 h-1.5 rounded-full ${isToday ? 'bg-slate-400' : 'bg-brand-400'} absolute bottom-1"></div>` : '';
+                const dotHtml = hasTasks ? `<div class="w-1.5 h-1.5 rounded-full ${isToday ? 'bg-slate-400' : 'bg-brand-500'} absolute bottom-1"></div>` : '';
                 const paddingAdjust = hasTasks ? 'pb-1' : '';
 
                 html += `<div onclick="window.filterTasksByDate(${year}, ${month}, ${d})"><div class="${dayClass}"><span class="${paddingAdjust}">${d}</span>${dotHtml}</div></div>`;
             }
             html += `</div>`;
             container.innerHTML = html;
-        }
+        };
 
         window.changeMiniCalMonth = function(dir) {
-            miniCalDate.setMonth(miniCalDate.getMonth() + dir);
+            window.miniCalDate.setMonth(window.miniCalDate.getMonth() + dir);
             window.renderMiniCalendar();
         };
 
@@ -767,7 +1003,7 @@
             window.tasksViewMode = 'list';
             const filterDateStr = `${d.toString().padStart(2,'0')}.${(m+1).toString().padStart(2,'0')}.${y}`;
             window.appState.filterText = filterDateStr;
-            navigate('tasks');
+            window.navigate('tasks');
             setTimeout(() => {
                 const searchInput = document.querySelector('input[placeholder="סינון (משימה או קטגוריה)..."]');
                 if(searchInput) searchInput.value = filterDateStr;
@@ -775,8 +1011,7 @@
         };
 
         // --- HTML Generators ---
-
-        function getDashboardHTML() {
+        window.getDashboardHTML = function() {
             const filterText = window.appState.filterText || '';
             let activeTasks = window.appState.tasks.filter(t => t.status === 'active');
             const completed = window.appState.tasks.filter(t => t.status === 'completed').length;
@@ -803,21 +1038,21 @@
                 return d >= now && d <= threeDaysFromNow;
             }).sort((a,b) => new Date(a.dueDate) - new Date(b.dueDate));
 
-            const todayQuote = getDailyQuote();
+            const hebrewDateStr = new Intl.DateTimeFormat('he-IL-u-ca-hebrew', {day: 'numeric', month: 'long', year: 'numeric'}).format(now);
+            const gregorianDateStr = new Intl.DateTimeFormat('he-IL', {day: 'numeric', month: 'long', year: 'numeric'}).format(now);
+            const todayQuote = window.getDailyQuote();
             const userPref = window.appState.quotesPrefs.find(q => q.quoteId === todayQuote.id);
             const likeClass = userPref && userPref.status === 'liked' ? 'text-green-600 bg-green-100 dark:bg-green-900/50 dark:text-green-400' : 'text-gray-400 hover:text-green-600 hover:bg-green-50';
             const dislikeClass = userPref && userPref.status === 'disliked' ? 'text-red-600 bg-red-100 dark:bg-red-900/50 dark:text-red-400' : 'text-gray-400 hover:text-red-600 hover:bg-red-50';
 
             return `
-                <div class="mb-6 bg-gradient-to-r from-pastel-purple/60 to-pastel-blue/60 dark:from-purple-900/20 dark:to-blue-900/20 rounded-2xl p-6 border border-purple-100 dark:border-purple-900/30 flex flex-col md:flex-row justify-between items-center relative overflow-hidden shadow-sm gap-4">
-                    <i class="ph ph-quotes text-7xl absolute -left-4 -top-6 text-purple-300 dark:text-purple-800/30 opacity-40"></i>
-                    <div class="relative z-10 pr-4">
-                        <p class="text-lg md:text-xl font-medium text-gray-800 dark:text-gray-100 mb-1">"${todayQuote.text}"</p>
-                        <span class="text-sm text-gray-600 dark:text-gray-400 font-semibold">— ${todayQuote.author}</span>
+                <!-- Hebrew & Gregorian Date Bar -->
+                <div class="mb-6 bg-white dark:bg-slate-800 rounded-xl p-3 border border-gray-100 dark:border-slate-700 shadow-sm flex justify-between items-center px-6">
+                    <div class="text-gray-500 dark:text-gray-400 font-medium text-sm flex items-center gap-2">
+                        <i class="ph ph-calendar-blank text-lg"></i> ${gregorianDateStr}
                     </div>
-                    <div class="flex gap-2 relative z-10">
-                        <button onclick="window.dbActions.setQuotePref('${todayQuote.id}', 'liked')" class="w-10 h-10 rounded-full flex items-center justify-center transition-colors dark:hover:bg-green-900/30 ${likeClass}"><i class="ph ph-thumbs-up text-xl"></i></button>
-                        <button onclick="window.dbActions.setQuotePref('${todayQuote.id}', 'disliked')" class="w-10 h-10 rounded-full flex items-center justify-center transition-colors dark:hover:bg-red-900/30 ${dislikeClass}"><i class="ph ph-thumbs-down text-xl"></i></button>
+                    <div class="font-bold text-brand-700 dark:text-brand-400 text-sm flex items-center gap-2">
+                        ${hebrewDateStr} <i class="ph ph-moon-stars text-lg"></i>
                     </div>
                 </div>
 
@@ -846,7 +1081,7 @@
                         <div class="p-3 flex-1 overflow-y-auto space-y-3">
                             ${upcomingTasks.length === 0 ? 
                                 `<div class="h-full flex flex-col items-center justify-center text-gray-400"><i class="ph ph-coffee text-4xl mb-2"></i><p>${filterText ? 'אין תוצאות לחיפוש' : 'אין משימות קרובות'}</p></div>` 
-                                : upcomingTasks.map(t => generateTaskCardHTML(t)).join('')}
+                                : upcomingTasks.map(t => window.generateTaskCardHTML(t)).join('')}
                         </div>
                     </div>
 
@@ -879,7 +1114,7 @@
                             `).join('')}
                         </div>
                         <div class="p-4 border-t border-gray-100 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/50 rounded-b-2xl">
-                            <form onsubmit="handleQuickTaskAdd(event)" class="flex flex-col gap-2">
+                            <form onsubmit="window.handleQuickTaskAdd(event)" class="flex flex-col gap-2">
                                 <input type="text" id="qt-title" placeholder="נושא משימה..." required class="w-full text-sm bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-lg px-3 py-2 outline-none">
                                 <div class="flex gap-2">
                                     <input type="text" id="qt-desc" placeholder="תיאור (אופציונלי)" class="w-full text-sm bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-lg px-3 py-2 outline-none">
@@ -890,9 +1125,9 @@
                     </div>
                 </div>
             `;
-        }
+        };
 
-        function getTasksHTML() {
+        window.getTasksHTML = function() {
             const filterText = window.appState.filterText || '';
             let activeTasks = window.appState.tasks.filter(t => t.status === 'active');
             
@@ -913,7 +1148,7 @@
 
             let content = '';
             if(isList) {
-                content = activeTasks.length === 0 ? '<p class="text-center text-gray-500 py-10">אין תוצאות.</p>' : activeTasks.map(t => generateTaskCardHTML(t)).join('');
+                content = activeTasks.length === 0 ? '<p class="text-center text-gray-500 py-10">אין תוצאות.</p>' : activeTasks.map(t => window.generateTaskCardHTML(t)).join('');
             } else {
                 content = '<div id="calendar-view-container" class="h-[600px] w-full relative"><div id="calendar-view" class="absolute inset-0 bg-white dark:bg-slate-800 rounded-xl p-2"></div></div>';
             }
@@ -923,10 +1158,10 @@
                     <div class="p-5 border-b border-gray-100 dark:border-slate-700 flex justify-between items-center flex-wrap gap-4">
                         <h3 class="font-bold text-lg dark:text-white">ריכוז כל המשימות</h3>
                         <div class="flex items-center p-1 bg-gray-50 dark:bg-slate-900 rounded-xl border border-gray-200 dark:border-slate-700">
-                            <button onclick="window.tasksViewMode='list'; renderCurrentView();" class="px-4 py-1.5 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 ${listBtnClass}">
+                            <button onclick="window.tasksViewMode='list'; window.renderCurrentView();" class="px-4 py-1.5 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 ${listBtnClass}">
                                 <i class="ph ph-list-dashes"></i> רשימה
                             </button>
-                            <button onclick="window.tasksViewMode='calendar'; renderCurrentView();" class="px-4 py-1.5 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 ${calBtnClass}">
+                            <button onclick="window.tasksViewMode='calendar'; window.renderCurrentView();" class="px-4 py-1.5 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 ${calBtnClass}">
                                 <i class="ph ph-calendar-blank"></i> לוח שנה
                             </button>
                         </div>
@@ -936,9 +1171,9 @@
                     </div>
                 </div>
             `;
-        }
+        };
 
-        function getKanbanHTML() {
+        window.getKanbanHTML = function() {
             const tasks = window.appState.tasks.filter(t => t.status === 'active');
             const low = tasks.filter(t => t.priority === 'low');
             const medium = tasks.filter(t => t.priority === 'medium');
@@ -946,35 +1181,212 @@
             const colClass = "flex-1 min-w-[300px] bg-gray-50 dark:bg-slate-900 rounded-2xl p-4 flex flex-col gap-3 h-[calc(100vh-140px)] overflow-y-auto border border-gray-100 dark:border-slate-800";
             return `
                 <div class="flex gap-6 overflow-x-auto pb-4 h-full">
-                    <div class="${colClass}"><div class="flex items-center gap-2 mb-2 px-2"><div class="w-3 h-3 rounded-full bg-blue-400"></div><h3 class="font-bold text-gray-700 dark:text-gray-300">דחיפות נמוכה</h3><span class="text-xs bg-gray-200 dark:bg-slate-700 px-2 rounded-full">${low.length}</span></div>${low.map(t => generateTaskCardHTML(t, true)).join('')}</div>
-                    <div class="${colClass}"><div class="flex items-center gap-2 mb-2 px-2"><div class="w-3 h-3 rounded-full bg-yellow-400"></div><h3 class="font-bold text-gray-700 dark:text-gray-300">דחיפות בינונית</h3><span class="text-xs bg-gray-200 dark:bg-slate-700 px-2 rounded-full">${medium.length}</span></div>${medium.map(t => generateTaskCardHTML(t, true)).join('')}</div>
-                    <div class="${colClass}"><div class="flex items-center gap-2 mb-2 px-2"><div class="w-3 h-3 rounded-full bg-red-400"></div><h3 class="font-bold text-gray-700 dark:text-gray-300">דחיפות גבוהה</h3><span class="text-xs bg-gray-200 dark:bg-slate-700 px-2 rounded-full">${high.length}</span></div>${high.map(t => generateTaskCardHTML(t, true)).join('')}</div>
+                    <div class="${colClass}"><div class="flex items-center gap-2 mb-2 px-2"><div class="w-3 h-3 rounded-full bg-blue-400"></div><h3 class="font-bold text-gray-700 dark:text-gray-300">דחיפות נמוכה</h3><span class="text-xs bg-gray-200 dark:bg-slate-700 px-2 rounded-full">${low.length}</span></div>${low.map(t => window.generateTaskCardHTML(t, true)).join('')}</div>
+                    <div class="${colClass}"><div class="flex items-center gap-2 mb-2 px-2"><div class="w-3 h-3 rounded-full bg-yellow-400"></div><h3 class="font-bold text-gray-700 dark:text-gray-300">דחיפות בינונית</h3><span class="text-xs bg-gray-200 dark:bg-slate-700 px-2 rounded-full">${medium.length}</span></div>${medium.map(t => window.generateTaskCardHTML(t, true)).join('')}</div>
+                    <div class="${colClass}"><div class="flex items-center gap-2 mb-2 px-2"><div class="w-3 h-3 rounded-full bg-red-400"></div><h3 class="font-bold text-gray-700 dark:text-gray-300">דחיפות גבוהה</h3><span class="text-xs bg-gray-200 dark:bg-slate-700 px-2 rounded-full">${high.length}</span></div>${high.map(t => window.generateTaskCardHTML(t, true)).join('')}</div>
                 </div>
             `;
-        }
+        };
 
-        function getCategoriesHTML() { 
-            return `<div class="p-6 bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 max-w-2xl mx-auto"><h3 class="font-bold mb-4 dark:text-white">הגדרת קטגוריות</h3><form onsubmit="handleCategoryAdd(event)" class="flex gap-4 mb-6"><input type="text" id="new-cat-name" placeholder="שם..." class="flex-1 border rounded-lg px-3 py-2 dark:bg-slate-900 dark:border-slate-700 dark:text-white" required><select id="new-cat-color" class="border rounded-lg px-3 dark:bg-slate-900 dark:border-slate-700 dark:text-white"><option value="pastel-blue">כחול</option><option value="pastel-red">אדום</option><option value="pastel-green">ירוק</option><option value="pastel-yellow">צהוב</option><option value="pastel-purple">סגול</option></select><button type="submit" class="bg-brand-600 text-white px-4 rounded-lg">הוסף</button></form><div class="space-y-2">${window.appState.categories.map(c=>`<div class="flex justify-between p-3 border rounded-xl dark:border-slate-700 dark:text-white"><span>${c.name}</span><button onclick="window.dbActions.deleteCategory('${c.id}')" class="text-red-500"><i class="ph ph-trash"></i></button></div>`).join('')}</div></div>`; 
-        }
+        window.getCategoriesHTML = function() { 
+            return `<div class="p-6 bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 max-w-2xl mx-auto"><h3 class="font-bold mb-4 dark:text-white">הגדרת קטגוריות</h3><form onsubmit="window.handleCategoryAdd(event)" class="flex gap-4 mb-6"><input type="text" id="new-cat-name" placeholder="שם..." class="flex-1 border rounded-lg px-3 py-2 dark:bg-slate-900 dark:border-slate-700 dark:text-white" required><select id="new-cat-color" class="border rounded-lg px-3 dark:bg-slate-900 dark:border-slate-700 dark:text-white"><option value="pastel-blue">כחול</option><option value="pastel-red">אדום</option><option value="pastel-green">ירוק</option><option value="pastel-yellow">צהוב</option><option value="pastel-purple">סגול</option></select><button type="submit" class="bg-brand-600 text-white px-4 rounded-lg">הוסף</button></form><div class="space-y-2">${window.appState.categories.map(c=>`<div class="flex justify-between p-3 border rounded-xl dark:border-slate-700 dark:text-white"><span>${c.name}</span><button onclick="window.dbActions.deleteCategory('${c.id}')" class="text-red-500"><i class="ph ph-trash"></i></button></div>`).join('')}</div></div>`; 
+        };
 
-        function getArchiveHTML() {
+        window.getArchiveHTML = function() {
             const archived = window.appState.tasks.filter(t => t.status === 'completed' || t.status === 'cancelled');
             return `<div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 min-h-full"><div class="p-5 border-b border-gray-100 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/50 rounded-t-2xl"><h3 class="font-bold text-lg dark:text-white flex items-center gap-2"><i class="ph ph-archive"></i> ארכיון משימות</h3></div><div class="p-4 space-y-3 opacity-70 hover:opacity-100 transition-opacity">${archived.length === 0 ? '<p class="text-center text-gray-500 py-10">הארכיון ריק.</p>' : archived.map(t => `<div class="p-4 border border-gray-200 dark:border-slate-700 rounded-xl bg-gray-50 dark:bg-slate-800/50 flex justify-between items-center"><div><h4 class="font-medium text-gray-700 dark:text-gray-300 line-through decoration-gray-400">${t.title}</h4><p class="text-xs text-gray-500 mt-1">סטטוס: ${t.status === 'completed' ? '<span class="text-green-500">הושלם</span>' : '<span class="text-red-500">בוטל</span>'}</p></div><button onclick="window.dbActions.updateTask('${t.id}', {status:'active'})" class="text-brand-600 hover:bg-brand-50 px-3 py-1.5 rounded-lg text-sm transition-colors dark:hover:bg-slate-700">שחזר</button></div>`).join('')}</div></div>`;
-        }
+        };
 
-        function getQuotesHTML() {
+        window.getQuotesHTML = function() {
             const liked = window.appState.quotesPrefs.filter(p=>p.status==='liked').map(p=>p.quoteId);
             const disliked = window.appState.quotesPrefs.filter(p=>p.status==='disliked').map(p=>p.quoteId);
             const lQ = window.quotesList.filter(q=>liked.includes(q.id));
             const dQ = window.quotesList.filter(q=>disliked.includes(q.id));
             return `<div class="grid grid-cols-1 lg:grid-cols-2 gap-6"><div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 flex flex-col h-[500px]"><div class="p-5 border-b bg-green-50 dark:bg-green-900/10 rounded-t-2xl"><h3 class="font-bold dark:text-white flex items-center gap-2"><i class="ph ph-thumbs-up text-green-500"></i> אהבתי</h3></div><div class="p-4 flex-1 overflow-y-auto space-y-3">${lQ.length===0?'<p class="text-center text-gray-500 mt-10">ריק.</p>':lQ.map(q=>`<div class="p-4 bg-gray-50 dark:bg-slate-700/50 rounded-xl border"><p class="font-medium mb-2 dark:text-white">"${q.text}"</p><p class="text-xs text-gray-500">— ${q.author}</p></div>`).join('')}</div></div><div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 flex flex-col h-[500px]"><div class="p-5 border-b bg-red-50 dark:bg-red-900/10 rounded-t-2xl"><h3 class="font-bold dark:text-white flex items-center gap-2"><i class="ph ph-thumbs-down text-red-500"></i> פחות</h3></div><div class="p-4 flex-1 overflow-y-auto space-y-3">${dQ.length===0?'<p class="text-center text-gray-500 mt-10">ריק.</p>':dQ.map(q=>`<div class="p-4 bg-gray-50 dark:bg-slate-700/50 rounded-xl border opacity-60"><p class="text-sm mb-2 dark:text-white">"${q.text}"</p><p class="text-xs text-gray-500">— ${q.author}</p></div>`).join('')}</div></div></div>`;
-        }
+        };
 
-        function getReportsHTML() {
+        window.getReportsHTML = function() {
             return `<div class="grid grid-cols-1 md:grid-cols-2 gap-6 h-[500px]"><div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 p-6 flex flex-col"><h3 class="font-bold text-lg dark:text-white mb-4 text-center">משימות לפי קטגוריה</h3><div class="flex-1 relative w-full flex justify-center"><canvas id="catChart"></canvas></div></div><div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 p-6 flex flex-col"><h3 class="font-bold text-lg dark:text-white mb-4 text-center">סטטוס משימות</h3><div class="flex-1 relative w-full flex justify-center"><canvas id="statusChart"></canvas></div></div></div>`;
-        }
+        };
 
-        function initCharts() {
+        window.getUsersHTML = function() {
+            const role = window.globalDB.users.find(u => u.username === window.currentUser)?.role;
+            if(role !== 'admin' && window.currentUser !== 'LIORACH') return '<div class="text-center p-10"><h2 class="text-2xl text-red-500">אין לך הרשאה לגשת לכאן.</h2></div>';
+            
+            let usersRows = window.globalDB.users.map(u => `
+                <div class="flex justify-between items-center p-3 border-b dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700/30 transition-colors">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-brand-100 flex items-center justify-center text-brand-600"><i class="ph ph-user"></i></div>
+                        <span class="font-bold dark:text-white">${u.username}</span>
+                        ${u.role === 'admin' ? '<span class="text-xs bg-purple-100 text-purple-600 px-2 py-0.5 rounded-full mr-2">מנהל</span>' : ''}
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="window.promptChangePassword('${u.username}')" class="text-sm bg-blue-50 text-blue-600 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors">שנה סיסמה</button>
+                        ${u.username !== 'LIORACH' ? `<button onclick="window.deleteUser('${u.username}')" class="text-sm bg-red-50 text-red-600 hover:bg-red-100 px-3 py-1.5 rounded-lg transition-colors">מחק</button>` : ''}
+                    </div>
+                </div>
+            `).join('');
+
+            return `
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 p-6 max-w-3xl mx-auto">
+                    <div class="flex justify-between items-center mb-6 border-b pb-4 dark:border-slate-700">
+                        <h3 class="font-bold text-xl dark:text-white flex items-center gap-2"><i class="ph ph-users-three text-brand-500"></i> ניהול משתמשים</h3>
+                        <button onclick="window.copyShareLink()" class="text-sm bg-green-500 text-white hover:bg-green-600 px-4 py-2 rounded-xl flex items-center gap-2 shadow-sm transition-colors font-medium"><i class="ph ph-link"></i> העתק קישור למשתמשים</button>
+                    </div>
+                    
+                    <div class="mb-8 bg-gray-50 dark:bg-slate-900 rounded-xl p-5 border border-gray-200 dark:border-slate-700 shadow-inner">
+                        <h4 class="font-semibold text-sm mb-3 dark:text-gray-300 flex items-center gap-2"><i class="ph ph-user-plus text-brand-500"></i> הוספת משתמש חדש</h4>
+                        <form onsubmit="window.handleAddUser(event)" class="flex gap-3 items-end">
+                            <div class="flex-1">
+                                <label class="text-xs text-gray-500 block mb-1">שם משתמש (באנגלית או במספרים)</label>
+                                <input type="text" id="new-username" required class="w-full border rounded-lg px-3 py-2 text-sm dark:bg-slate-800 dark:border-slate-600 dark:text-white outline-none focus:border-brand-500" dir="ltr">
+                            </div>
+                            <div class="flex-1">
+                                <label class="text-xs text-gray-500 block mb-1">סיסמה זמנית</label>
+                                <input type="text" id="new-password" required class="w-full border rounded-lg px-3 py-2 text-sm dark:bg-slate-800 dark:border-slate-600 dark:text-white outline-none focus:border-brand-500" dir="ltr">
+                            </div>
+                            <button type="submit" class="bg-brand-600 hover:bg-brand-700 text-white px-5 py-2.5 rounded-lg text-sm transition-colors shadow-sm font-medium">הוסף</button>
+                        </form>
+                    </div>
+
+                    <h4 class="font-semibold text-sm mb-3 dark:text-gray-300 px-1">רשימת משתמשים במערכת</h4>
+                    <div class="border rounded-xl dark:border-slate-700 overflow-hidden bg-white dark:bg-slate-800 mb-8">
+                        ${usersRows}
+                    </div>
+
+                    <!-- אזור הגדרות למנהל -->
+                    <div class="bg-gray-50 dark:bg-slate-900 rounded-xl p-5 border border-gray-200 dark:border-slate-700 shadow-inner">
+                        <h4 class="font-semibold text-sm mb-3 dark:text-gray-300 flex items-center gap-2"><i class="ph ph-gear text-brand-500"></i> הגדרות מערכת (למנהל בלבד)</h4>
+                        <form onsubmit="window.saveAdminSettings(event)" class="space-y-3">
+                            <div>
+                                <label class="text-xs text-gray-500 block mb-1">קישור קבוע לשיתוף משתמשים (לדוגמה: מ-GitHub Pages)</label>
+                                <input type="text" id="admin-share-link" placeholder="https://..." value="${window.globalDB.settings?.shareLink || ''}" class="w-full border rounded-lg px-3 py-2 text-sm dark:bg-slate-800 dark:border-slate-600 dark:text-white outline-none focus:border-brand-500" dir="ltr">
+                            </div>
+                            <div>
+                                <label class="text-xs text-gray-500 block mb-1">כתובת שרת סנכרון (Google Apps Script URL)</label>
+                                <input type="text" id="admin-drive-url" value="${window.globalDB.settings?.driveUrl || window.HARDCODED_DRIVE_URL}" class="w-full border rounded-lg px-3 py-2 text-sm dark:bg-slate-800 dark:border-slate-600 dark:text-white outline-none focus:border-brand-500" dir="ltr">
+                            </div>
+                            <button type="submit" class="bg-brand-600 hover:bg-brand-700 text-white px-5 py-2.5 rounded-lg text-sm transition-colors shadow-sm font-medium w-full mt-2">שמור הגדרות מערכת</button>
+                        </form>
+                    </div>
+                </div>
+            `;
+        };
+
+        window.saveAdminSettings = function(e) {
+            e.preventDefault();
+            if(!window.globalDB.settings) window.globalDB.settings = {};
+            window.globalDB.settings.shareLink = document.getElementById('admin-share-link').value.trim();
+            
+            const oldDriveUrl = window.globalDB.settings.driveUrl;
+            window.globalDB.settings.driveUrl = document.getElementById('admin-drive-url').value.trim();
+            
+            window.saveToLocalStorage();
+            window.showToast('הגדרות מערכת נשמרו בהצלחה!', 'success');
+            
+            if(oldDriveUrl !== window.globalDB.settings.driveUrl) {
+                window.connectDrive(); 
+            }
+        };
+
+        window.handleAddUser = function(e) {
+            e.preventDefault();
+            const u = document.getElementById('new-username').value.trim();
+            const p = document.getElementById('new-password').value.trim();
+            
+            if(window.globalDB.users.find(x => x.username.toLowerCase() === u.toLowerCase())) {
+                window.showToast('שם המשתמש כבר קיים במערכת', 'error'); return;
+            }
+            
+            window.globalDB.users.push({ username: u, password: p, role: 'user' });
+            window.globalDB.workspaces[u] = { 
+                tasks: [], quickTasks: [], quotesPrefs: [],
+                categories: [
+                    {id:'c1', name:'עבודה', color:'pastel-blue'}, 
+                    {id:'c2', name:'אישי', color:'pastel-pink'}
+                ]
+            }; 
+            
+            window.saveToLocalStorage();
+            window.showToast('משתמש נוסף בהצלחה', 'success');
+            window.renderCurrentView();
+        };
+
+        window.deleteUser = function(u) {
+            window.actionToConfirm = () => {
+                window.globalDB.users = window.globalDB.users.filter(x => x.username !== u);
+                delete window.globalDB.workspaces[u];
+                window.saveToLocalStorage();
+                window.showToast(`המשתמש ${u} נמחק`, 'success');
+                window.renderCurrentView();
+            };
+            document.getElementById('confirm-modal-text').innerText = `האם אתה בטוח שברצונך למחוק את המשתמש "${u}"? פעולה זו תמחק גם את כל המשימות והמידע האישי שלו לתמיד.`;
+            window.openModal('confirm-modal');
+        };
+
+        window.promptChangePassword = function(u) {
+            const newPass = prompt(`הזן סיסמה חדשה עבור המשתמש ${u}:`);
+            if (newPass && newPass.trim() !== '') {
+                const user = window.globalDB.users.find(x => x.username === u);
+                if (user) {
+                    user.password = newPass.trim();
+                    window.saveToLocalStorage();
+                    window.showToast('הסיסמה עודכנה בהצלחה', 'success');
+                }
+            }
+        };
+
+        window.copyShareLink = function() {
+            const link = window.globalDB.settings?.shareLink || window.location.href;
+            navigator.clipboard.writeText(link).then(() => {
+                window.showToast('הקישור הועתק לחומץ! שלח אותו למשתמשים החדשים שיצרת.', 'success');
+            }).catch(() => {
+                window.showToast('שגיאה בהעתקה. אנא העתק את הכתובת מדפדפן למעלה.', 'error');
+            });
+        };
+
+        window.handleQuickTaskAdd = function(e) {
+            e.preventDefault();
+            window.dbActions.addQuickTask({ title: document.getElementById('qt-title').value, desc: document.getElementById('qt-desc').value });
+            e.target.reset();
+        };
+        
+        window.handleCategoryAdd = function(e) {
+            e.preventDefault();
+            window.dbActions.addCategory({ name: document.getElementById('new-cat-name').value, color: document.getElementById('new-cat-color').value });
+            e.target.reset();
+        };
+
+        window.togglePomodoro = function(taskId) {
+            if(window.currentPomodoroTask === taskId && window.pomodoroInterval) {
+                clearInterval(window.pomodoroInterval);
+                window.pomodoroInterval = null;
+                document.getElementById(`pomodoro-icon-${taskId}`).classList.remove('timer-running', 'text-red-500');
+                window.showToast('טיימר הופסק', 'info');
+            } else {
+                if(window.pomodoroInterval) clearInterval(window.pomodoroInterval);
+                window.currentPomodoroTask = taskId;
+                window.pomodoroTimeLeft = 25 * 60;
+                
+                document.querySelectorAll('.timer-icon').forEach(btn => btn.classList.remove('timer-running', 'text-red-500'));
+                const currentBtn = document.getElementById(`pomodoro-icon-${taskId}`);
+                if(currentBtn) currentBtn.classList.add('timer-running', 'text-red-500');
+
+                window.showToast('טיימר ריכוז החל! יש לך 25 דקות', 'success');
+                
+                window.pomodoroInterval = setInterval(() => {
+                    window.pomodoroTimeLeft--;
+                    if(window.pomodoroTimeLeft <= 0) {
+                        clearInterval(window.pomodoroInterval);
+                        window.pomodoroInterval = null;
+                        if(currentBtn) currentBtn.classList.remove('timer-running', 'text-red-500');
+                        window.showToast('זמן פומודורו נגמר! עשה הפסקה קצרה.', 'success');
+                    }
+                }, 1000);
+            }
+        };
+
+        window.initCharts = function() {
             const tasks = window.appState.tasks;
             const cats = window.appState.categories;
             const catCounts = {'ללא קטגוריה': 0};
@@ -990,12 +1402,12 @@
             const comp = tasks.filter(t=>t.status==='completed').length;
             const canc = tasks.filter(t=>t.status==='cancelled').length;
             new Chart(document.getElementById('statusChart'), { type: 'bar', data: { labels: ['פעילות', 'הושלמו', 'בוטלו'], datasets: [{ label: 'משימות', data: [active, comp, canc], backgroundColor: ['#3b82f6', '#22c55e', '#ef4444'], borderRadius: 6 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { ticks: {stepSize: 1, color: textColor} }, x: { ticks: {color: textColor} } } } });
-        }
+        };
 
-        function generateTaskCardHTML(t, compact = false) {
+        window.generateTaskCardHTML = function(t, compact = false) {
             const cat = window.appState.categories.find(c => c.id === t.categoryId);
-            const catColor = cat && colorMap[cat.color] ? cat.color : 'pastel-blue';
-            const catClass = cat ? `${colorMap[catColor]} ${bgMapDark[catColor]} border` : 'bg-gray-100 text-gray-600 dark:bg-slate-700 dark:text-gray-300';
+            const catColor = cat && window.colorMap[cat.color] ? cat.color : 'pastel-blue';
+            const catClass = cat ? `${window.colorMap[catColor]} ${window.bgMapDark[catColor]} border` : 'bg-gray-100 text-gray-600 dark:bg-slate-700 dark:text-gray-300';
             const catName = cat ? cat.name : 'ללא קטגוריה';
             
             const isCritical = t.priority === 'high' || (cat && cat.name === 'קריטי');
@@ -1014,7 +1426,7 @@
             
             const attCount = t.attachments ? t.attachments.length : 0;
             
-            const isTimerRunning = currentEditingTaskId === null && pomodoroInterval && currentPomodoroTask === t.id;
+            const isTimerRunning = window.currentEditingTaskId === null && window.pomodoroInterval && window.currentPomodoroTask === t.id;
             const timerClass = isTimerRunning ? 'timer-running text-red-500' : 'text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20';
 
             return `
@@ -1026,8 +1438,8 @@
                         </div>
                         <div class="flex items-center gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
                             <button onclick="window.togglePomodoro('${t.id}')" id="pomodoro-icon-${t.id}" class="timer-icon p-1.5 rounded-lg transition-all ${timerClass}" title="טיימר ריכוז (25 דק')"><i class="ph ph-timer"></i></button>
-                            <button onclick="editTask('${t.id}')" class="p-1.5 text-gray-400 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-colors"><i class="ph ph-pencil-simple"></i></button>
-                            <button onclick="promptCancelTask('${t.id}')" class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"><i class="ph ph-x-circle"></i></button>
+                            <button onclick="window.editTask('${t.id}')" class="p-1.5 text-gray-400 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-colors"><i class="ph ph-pencil-simple"></i></button>
+                            <button onclick="window.promptCancelTask('${t.id}')" class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"><i class="ph ph-x-circle"></i></button>
                         </div>
                     </div>
                     
@@ -1042,10 +1454,9 @@
                     ${subTotal > 0 ? `<div class="mt-4 pt-3 border-t border-gray-50 dark:border-slate-700/50"><div class="flex justify-between text-xs text-gray-500 mb-1"><span>התקדמות (${subDone}/${subTotal})</span><span>${Math.round(progress)}%</span></div><div class="w-full bg-gray-200 dark:bg-slate-700 rounded-full h-1.5"><div class="bg-brand-500 h-1.5 rounded-full" style="width: ${progress}%"></div></div></div>` : ''}
                 </div>
             `;
-        }
+        };
 
-        let mainCalendarInstance = null;
-        function initCalendar() {
+        window.initCalendar = function() {
             requestAnimationFrame(() => {
                 setTimeout(() => {
                     const events = window.appState.tasks.filter(t=>t.status==='active' && t.dueDate).map(t => {
@@ -1058,43 +1469,39 @@
 
                     const calEl = document.getElementById('calendar-view');
                     if(calEl) {
-                        if (mainCalendarInstance) mainCalendarInstance.destroy();
-                        mainCalendarInstance = new FullCalendar.Calendar(calEl, {
+                        if (window.mainCalendarInstance) window.mainCalendarInstance.destroy();
+                        window.mainCalendarInstance = new FullCalendar.Calendar(calEl, {
                             initialView: 'dayGridMonth', locale: 'he', direction: 'rtl',
                             headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek' },
                             events: events, height: '100%',
-                            eventClick: function(info) { editTask(info.event.id); }
+                            eventClick: function(info) { window.editTask(info.event.id); }
                         });
-                        mainCalendarInstance.render();
-                        setTimeout(() => mainCalendarInstance.updateSize(), 100);
+                        window.mainCalendarInstance.render();
+                        setTimeout(() => window.mainCalendarInstance.updateSize(), 100);
                     }
                 }, 100);
             });
-        }
+        };
 
-        // --- File Upload Logic ---
+        // --- Modals & File Logic ---
         window.handleFileUpload = function(event) {
             const file = event.target.files[0];
             if(!file) return;
-            
-            if(file.size > 500 * 1024) {
-                showToast('הקובץ גדול מדי. ניתן להעלות עד 500KB', 'error');
-                return;
-            }
+            if(file.size > 500 * 1024) { window.showToast('הקובץ גדול מדי. ניתן להעלות עד 500KB', 'error'); return; }
             
             const reader = new FileReader();
             reader.onload = (e) => {
-                tempAttachments.push({ name: file.name, data: e.target.result });
+                window.tempAttachments.push({ name: file.name, data: e.target.result });
                 window.renderAttachmentsUI();
-                showToast('הקובץ צורף בהצלחה', 'success');
+                window.showToast('הקובץ צורף בהצלחה', 'success');
             };
             reader.readAsDataURL(file);
-        }
+        };
 
         window.renderAttachmentsUI = function() {
             const container = document.getElementById('attachments-container');
             if(!container) return;
-            container.innerHTML = tempAttachments.map((att, i) => `
+            container.innerHTML = window.tempAttachments.map((att, i) => `
                 <div class="flex items-center justify-between bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 p-2 rounded-xl">
                     <div class="flex items-center gap-2 overflow-hidden">
                         <i class="ph ph-file-text text-brand-500 text-lg"></i>
@@ -1104,21 +1511,21 @@
                     <button type="button" onclick="window.removeTempAttachment(${i})" class="text-red-400 hover:text-red-600"><i class="ph ph-trash"></i></button>
                 </div>
             `).join('');
-        }
+        };
         
         window.removeTempAttachment = function(i) {
-            tempAttachments.splice(i, 1);
+            window.tempAttachments.splice(i, 1);
             window.renderAttachmentsUI();
-        }
+        };
 
-        // --- Task Modals & CRUD ---
         window.openModal = function(id) {
             document.getElementById(id).classList.remove('hidden');
             if(id === 'task-modal') {
                 const select = document.getElementById('task-category');
-                select.innerHTML = '<option value="">ללא קטגוריה</option>' + window.appState.categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+                const cats = window.appState.categories || [];
+                select.innerHTML = '<option value="">ללא קטגוריה</option>' + cats.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
                 
-                if(!currentEditingTaskId) {
+                if(!window.currentEditingTaskId) {
                     document.getElementById('task-form').reset();
                     document.getElementById('task-id').value = '';
                     document.getElementById('task-created').value = new Date().toLocaleString('he-IL');
@@ -1126,326 +1533,116 @@
                     const tmrw = new Date(); tmrw.setDate(tmrw.getDate()+1); tmrw.setHours(12,0,0,0);
                     document.getElementById('task-due').value = new Date(tmrw.getTime() - tmrw.getTimezoneOffset() * 60000).toISOString().slice(0,16);
                     
-                    tempSubtasks = []; tempAttachments = [];
+                    window.tempSubtasks = []; window.tempAttachments = [];
                     window.renderSubtasksUI(); window.renderAttachmentsUI();
                     document.getElementById('task-modal-title').innerHTML = '<i class="ph ph-plus-circle text-brand-600"></i> משימה חדשה';
                 }
             }
-        }
+        };
 
-        window.closeModal = function(id) {
-            document.getElementById(id).classList.add('hidden');
-            currentEditingTaskId = null;
-            actionToConfirm = null;
-        }
+        window.closeModal = function(id) { document.getElementById(id).classList.add('hidden'); window.currentEditingTaskId = null; window.actionToConfirm = null; };
 
         window.renderSubtasksUI = function() {
             const container = document.getElementById('subtasks-container');
-            container.innerHTML = tempSubtasks.map((st, i) => `<div class="flex items-center gap-2 bg-white dark:bg-slate-800 border p-2 rounded-lg"><input type="checkbox" ${st.done ? 'checked' : ''} onchange="window.toggleTempSubtask(${i})" class="rounded text-brand-600 focus:ring-brand-500 w-4 h-4"><span class="flex-1 text-sm ${st.done ? 'line-through text-gray-400' : 'dark:text-gray-200'}">${st.title}</span><button type="button" onclick="window.removeTempSubtask(${i})" class="text-red-400 hover:text-red-600"><i class="ph ph-trash"></i></button></div>`).join('');
-        }
-        window.addSubtaskUI = function() {
-            const input = document.getElementById('new-subtask-input');
-            const val = input.value.trim();
-            if(val) { tempSubtasks.push({ title: val, done: false }); input.value = ''; window.renderSubtasksUI(); }
-        }
-        window.toggleTempSubtask = function(i) { tempSubtasks[i].done = !tempSubtasks[i].done; window.renderSubtasksUI(); }
-        window.removeTempSubtask = function(i) { tempSubtasks.splice(i, 1); window.renderSubtasksUI(); }
+            container.innerHTML = window.tempSubtasks.map((st, i) => `<div class="flex items-center gap-2 bg-white dark:bg-slate-800 border p-2 rounded-lg"><input type="checkbox" ${st.done ? 'checked' : ''} onchange="window.toggleTempSubtask(${i})" class="rounded text-brand-600 focus:ring-brand-500 w-4 h-4"><span class="flex-1 text-sm ${st.done ? 'line-through text-gray-400' : 'dark:text-gray-200'}">${st.title}</span><button type="button" onclick="window.removeTempSubtask(${i})" class="text-red-400 hover:text-red-600"><i class="ph ph-trash"></i></button></div>`).join('');
+        };
+        window.addSubtaskUI = function() { const input = document.getElementById('new-subtask-input'); const val = input.value.trim(); if(val) { window.tempSubtasks.push({ title: val, done: false }); input.value = ''; window.renderSubtasksUI(); } };
+        window.toggleTempSubtask = function(i) { window.tempSubtasks[i].done = !window.tempSubtasks[i].done; window.renderSubtasksUI(); };
+        window.removeTempSubtask = function(i) { window.tempSubtasks.splice(i, 1); window.renderSubtasksUI(); };
 
         window.saveTask = function(e) {
             e.preventDefault();
+            const notesEl = document.getElementById('task-notes');
+            const outlookEl = document.getElementById('task-outlook');
+            
             const taskData = {
                 title: document.getElementById('task-title').value,
                 dueDate: document.getElementById('task-due').value,
                 categoryId: document.getElementById('task-category').value,
                 priority: document.getElementById('task-priority').value,
                 description: document.getElementById('task-desc').value,
-                notes: document.getElementById('task-notes').value,
-                subtasks: tempSubtasks,
-                attachments: tempAttachments,
-                syncOutlook: document.getElementById('task-outlook').checked
+                notes: notesEl ? notesEl.value : '',
+                subtasks: window.tempSubtasks, 
+                attachments: window.tempAttachments, 
+                syncOutlook: outlookEl ? outlookEl.checked : false
             };
-
             const id = document.getElementById('task-id').value;
-            if(id) window.dbActions.updateTask(id, taskData);
-            else window.dbActions.addTask(taskData);
-            
-            if(taskData.syncOutlook && taskData.dueDate) generateICSFile(taskData);
+            if(id) window.dbActions.updateTask(id, taskData); else window.dbActions.addTask(taskData);
+            if(taskData.syncOutlook && taskData.dueDate) window.generateICSFile(taskData);
             window.closeModal('task-modal');
-        }
+        };
 
         window.editTask = function(id) {
-            const t = window.appState.tasks.find(x => x.id === id);
-            if(!t) return;
-            currentEditingTaskId = id;
+            const t = window.appState.tasks.find(x => x.id === id); if(!t) return;
+            window.currentEditingTaskId = id;
             document.getElementById('task-id').value = id;
             document.getElementById('task-title').value = t.title || '';
             document.getElementById('task-created').value = new Date(t.createdAt).toLocaleString('he-IL');
             document.getElementById('task-due').value = t.dueDate || '';
+            document.getElementById('task-category').value = t.categoryId || '';
             document.getElementById('task-priority').value = t.priority || 'medium';
             document.getElementById('task-desc').value = t.description || '';
-            document.getElementById('task-notes').value = t.notes || '';
-            document.getElementById('task-outlook').checked = t.syncOutlook || false;
             
-            tempSubtasks = t.subtasks ? JSON.parse(JSON.stringify(t.subtasks)) : [];
-            tempAttachments = t.attachments ? JSON.parse(JSON.stringify(t.attachments)) : [];
+            const notesEl = document.getElementById('task-notes');
+            if (notesEl) notesEl.value = t.notes || '';
+            
+            const outlookEl = document.getElementById('task-outlook');
+            if (outlookEl) outlookEl.checked = t.syncOutlook || false;
+            
+            window.tempSubtasks = t.subtasks ? JSON.parse(JSON.stringify(t.subtasks)) : [];
+            window.tempAttachments = t.attachments ? JSON.parse(JSON.stringify(t.attachments)) : [];
             
             window.openModal('task-modal');
-            document.getElementById('task-category').value = t.categoryId || '';
             document.getElementById('task-modal-title').innerHTML = '<i class="ph ph-pencil-simple text-brand-600"></i> עדכון משימה';
             window.renderSubtasksUI(); window.renderAttachmentsUI();
-        }
+        };
 
-        window.promptCancelTask = function(id) { actionToConfirm = () => window.dbActions.updateTask(id, { status: 'cancelled' }); window.openModal('confirm-modal'); }
-        document.getElementById('confirm-action-btn').addEventListener('click', () => { if(actionToConfirm) { actionToConfirm(); window.closeModal('confirm-modal'); } });
+        window.promptCancelTask = function(id) { window.actionToConfirm = () => window.dbActions.updateTask(id, { status: 'cancelled' }); window.openModal('confirm-modal'); };
+        document.getElementById('confirm-action-btn').addEventListener('click', () => { if(window.actionToConfirm) { window.actionToConfirm(); window.closeModal('confirm-modal'); } });
 
-        window.handleQuickTaskAdd = function(e) {
-            e.preventDefault();
-            window.dbActions.addQuickTask({ title: document.getElementById('qt-title').value, desc: document.getElementById('qt-desc').value });
-            e.target.reset();
-        }
-        window.handleCategoryAdd = function(e) {
-            e.preventDefault();
-            window.dbActions.addCategory({ name: document.getElementById('new-cat-name').value, color: document.getElementById('new-cat-color').value });
-            e.target.reset();
-        }
-
-        // --- Pomodoro ---
-        window.togglePomodoro = function(taskId) {
-            if(currentPomodoroTask === taskId && pomodoroInterval) {
-                clearInterval(pomodoroInterval);
-                pomodoroInterval = null;
-                document.getElementById(`pomodoro-icon-${taskId}`).classList.remove('timer-running', 'text-red-500');
-                showToast('טיימר הופסק', 'info');
-            } else {
-                if(pomodoroInterval) clearInterval(pomodoroInterval);
-                currentPomodoroTask = taskId;
-                pomodoroTimeLeft = 25 * 60;
-                
-                document.querySelectorAll('.timer-icon').forEach(btn => btn.classList.remove('timer-running', 'text-red-500'));
-                const currentBtn = document.getElementById(`pomodoro-icon-${taskId}`);
-                if(currentBtn) currentBtn.classList.add('timer-running', 'text-red-500');
-
-                showToast('טיימר ריכוז החל! יש לך 25 דקות', 'success');
-                
-                pomodoroInterval = setInterval(() => {
-                    pomodoroTimeLeft--;
-                    if(pomodoroTimeLeft <= 0) {
-                        clearInterval(pomodoroInterval);
-                        pomodoroInterval = null;
-                        if(currentBtn) currentBtn.classList.remove('timer-running', 'text-red-500');
-                        showToast('זמן פומודורו נגמר! עשה הפסקה קצרה.', 'success');
-                    }
-                }, 1000);
+        // --- Database Actions (dbActions) ---
+        window.dbActions = {
+            addTask(taskData) {
+                taskData.id = 't_' + Date.now(); taskData.createdAt = new Date().toISOString(); taskData.status = 'active';
+                window.appState.tasks.push(taskData); window.saveToLocalStorage(); window.showToast('המשימה נוספה בהצלחה', 'success');
+            },
+            updateTask(taskId, updates) {
+                const idx = window.appState.tasks.findIndex(t => t.id === taskId);
+                if (idx > -1) { window.appState.tasks[idx] = { ...window.appState.tasks[idx], ...updates }; window.saveToLocalStorage(); window.showToast('עודכן בהצלחה', 'success'); }
+            },
+            addQuickTask(data) {
+                data.id = 'qt_' + Date.now(); data.createdAt = new Date().toISOString(); data.status = 'active';
+                window.appState.quickTasks.push(data); window.saveToLocalStorage(); window.showToast('משימה מהירה נוספה', 'success');
+            },
+            updateQuickTask(taskId, updates) {
+                const idx = window.appState.quickTasks.findIndex(t => t.id === taskId);
+                if (idx > -1) { window.appState.quickTasks[idx] = { ...window.appState.quickTasks[idx], ...updates }; window.saveToLocalStorage(); }
+            },
+            addCategory(data) {
+                data.id = 'c_' + Date.now(); window.appState.categories.push(data); window.saveToLocalStorage(); window.showToast('קטגוריה נוספה', 'success');
+                return { id: data.id };
+            },
+            deleteCategory(id) {
+                window.appState.categories = window.appState.categories.filter(c => c.id !== id); window.saveToLocalStorage(); window.showToast('קטגוריה נמחקה', 'success');
+            },
+            setQuotePref(quoteId, status) {
+                const existing = window.appState.quotesPrefs.findIndex(q => q.quoteId === quoteId);
+                if (existing > -1) { window.appState.quotesPrefs[existing].status = status; window.appState.quotesPrefs[existing].updatedAt = new Date().toISOString(); } 
+                else { window.appState.quotesPrefs.push({ quoteId, status, updatedAt: new Date().toISOString() }); }
+                window.saveToLocalStorage();
             }
         };
 
-        // --- Utils ---
-        function updateSidebarBadges() {
-            const activeCount = window.appState.tasks.filter(t=>t.status==='active').length;
-            const badge = document.getElementById('badge-active');
-            if(badge) { if(activeCount > 0) { badge.innerText = activeCount; badge.classList.remove('hidden'); } else badge.classList.add('hidden'); }
-        }
-
-        function showToast(msg, type='info') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            const colors = type==='success' ? 'bg-green-500' : type==='error' ? 'bg-red-500' : 'bg-gray-800';
-            toast.className = `${colors} text-white px-4 py-3 rounded-xl shadow-lg flex items-center gap-3 transform translate-y-10 opacity-0 transition-all duration-300 z-50`;
-            toast.innerHTML = `<i class="ph ph-info font-bold text-lg"></i> <span>${msg}</span>`;
-            container.appendChild(toast);
-            setTimeout(() => toast.classList.remove('translate-y-10', 'opacity-0'), 10);
-            setTimeout(() => { toast.classList.add('opacity-0'); setTimeout(() => toast.remove(), 300); }, 3000);
-        }
-
-        window.toggleSidebar = function() {
-            document.getElementById('sidebar').classList.toggle('translate-x-full');
-            document.getElementById('sidebar-overlay').classList.toggle('hidden');
-        }
-
-        window.toggleTheme = function() {
-            const html = document.documentElement;
-            if (html.classList.contains('dark')) {
-                html.classList.remove('dark'); localStorage.setItem('theme', 'light'); window.appState.theme = 'light';
-            } else {
-                html.classList.add('dark'); localStorage.setItem('theme', 'dark'); window.appState.theme = 'dark';
-            }
-            if(window.appState.currentView === 'reports') renderCurrentView();
-        }
-
-        function getDailyQuote() {
-            const today = new Date();
-            const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
-            return window.quotesList[dayOfYear % window.quotesList.length];
-        }
-
-        function generateICSFile(task) {
-            const startDate = new Date(task.dueDate);
-            const endDate = new Date(startDate.getTime() + 60 * 60 * 1000); 
-            const formatDate = (date) => date.toISOString().replace(/-|:|\.\d+/g, '');
-            const icsData = `BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//TaskMaster//IL\nBEGIN:VEVENT\nDTSTART:${formatDate(startDate)}\nDTEND:${formatDate(endDate)}\nSUMMARY:${task.title}\nDESCRIPTION:${task.description || ''}\nEND:VEVENT\nEND:VCALENDAR`;
-            const blob = new Blob([icsData], { type: 'text/calendar;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a'); link.href = url; link.download = `Task_${task.title.replace(/\s+/g, '_')}.ics`;
-            document.body.appendChild(link); link.click(); document.body.removeChild(link);
-            setTimeout(() => showToast('קובץ יומן (Outlook) הורד', 'info'), 1000);
-        }
-
-        window.exportData = function(type) {
-            showToast(`מכין ייצוא ל-${type.toUpperCase()}...`, 'info');
-            const activeTasks = window.appState.tasks.filter(t=>t.status==='active').map(t => ({
-                'שם משימה': t.title, 'תאריך יעד': new Date(t.dueDate).toLocaleString('he-IL'), 'דחיפות': t.priority === 'high'?'גבוהה':t.priority==='medium'?'בינונית':'נמוכה', 'תיאור': t.description || ''
-            }));
-            if(type === 'excel') {
-                const ws = XLSX.utils.json_to_sheet(activeTasks); ws['!dir'] = 'rtl';
-                const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Tasks");
-                XLSX.writeFile(wb, "TaskMaster_Export.xlsx");
-            } 
-            else if (type === 'pdf') {
-                const opt = { margin: 1, filename: 'TaskMaster_Export.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' } };
-                html2pdf().set(opt).from(document.getElementById('main-content')).save();
-            }
-            else if (type === 'word') {
-                let tableHtml = `<html dir="rtl"><head><meta charset="utf-8"></head><body><h1>משימות TaskMaster</h1><table border="1" style="width:100%; border-collapse:collapse;"><tr><th>שם משימה</th><th>תאריך יעד</th><th>דחיפות</th><th>תיאור</th></tr>`;
-                activeTasks.forEach(t => tableHtml += `<tr><td>${t['שם משימה']}</td><td>${t['תאריך יעד']}</td><td>${t['דחיפות']}</td><td>${t['תיאור']}</td></tr>`);
-                tableHtml += `</table></body></html>`;
-                const blob = new Blob(['\ufeff', tableHtml], { type: 'application/msword' });
-                const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = 'TaskMaster_Export.doc';
-                document.body.appendChild(link); link.click(); document.body.removeChild(link);
-            }
-        }
-
-        // --- Gemini Integration ---
-        
-        // ==========================================
-        // צריבת מפתח ה-API של העוזר החכם (Gemini)
-        // ==========================================
-        const HARDCODED_GEMINI_API_KEY = "AQ.Ab8RN6K_cl4AzDIQ-nQbsCokZMTPgoLzyXaF10y8urVqI1CBlw"; 
-
+        // --- Gemini AI Assistant ---
         window.toggleGemini = function() {
             const win = document.getElementById('gemini-window');
             if (win.classList.contains('scale-0')) {
                 win.classList.remove('scale-0', 'opacity-0', 'pointer-events-none');
                 document.getElementById('gemini-input').focus();
-            } else {
-                win.classList.add('scale-0', 'opacity-0', 'pointer-events-none');
-            }
-        }
+            } else { win.classList.add('scale-0', 'opacity-0', 'pointer-events-none'); }
+        };
 
-        window.promptApiKey = function() {
-            const currentKey = localStorage.getItem('gemini_api_key') || '';
-            const key = prompt("הכנס מפתח API של Gemini מ-Google AI Studio:", currentKey);
-            if (key !== null && key.trim() !== "") {
-                localStorage.setItem('gemini_api_key', key.trim());
-                showToast('מפתח API נשמר בהצלחה', 'success');
-            } else if (key === "") {
-                localStorage.removeItem('gemini_api_key');
-                showToast('מפתח נמחק', 'info');
-            }
-        }
-
-        window.handleGeminiQuery = async function(e) {
-            e.preventDefault();
-            const input = document.getElementById('gemini-input');
-            const q = input.value.trim();
-            if(!q) return;
-
-            addChatMessage(q, 'user');
-            input.value = '';
-            const btn = document.getElementById('gemini-submit');
-            btn.disabled = true; btn.innerHTML = '<i class="ph ph-spinner animate-spin"></i>';
-
-            const activeTasksStr = JSON.stringify(window.appState.tasks.filter(t=>t.status==='active').map(t=>({title: t.title, due: t.dueDate, desc: t.description})));
-            const systemPrompt = `אתה עוזר וירטואלי חכם למערכת ניהול משימות בשם TaskMaster. ענה בעברית. להלן המשימות הפעילות: ${activeTasksStr}. עזור למשתמש.`;
-
-            const history = window.appState.geminiChatHistory;
-            history.push({role: "user", parts: [{text: q}]});
-
-            try {
-                const userKey = localStorage.getItem('gemini_api_key');
-                const keyToUse = userKey || HARDCODED_GEMINI_API_KEY;
-                
-                if (!keyToUse) {
-                    addChatMessage("חסר מפתח API. אנא לחץ על גלגל השיניים ⚙️ והזן מפתח.", 'bot');
-                    history.pop();
-                    btn.disabled = false; btn.innerHTML = '<i class="ph ph-paper-plane-right"></i>';
-                    return;
-                }
-
-                // 1. איתור אוטומטי של המודל המדויק שנתמך במפתח החשבון שלך
-                let targetModel = null;
-                let listError = null;
-                
-                try {
-                    const listRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${keyToUse}`);
-                    const listData = await listRes.json();
-                    
-                    if (listData.models) {
-                        const supported = listData.models
-                            .filter(m => m.supportedGenerationMethods?.includes("generateContent") && m.name.includes("gemini"))
-                            .map(m => m.name.replace("models/", ""));
-                        
-                        if (supported.length > 0) {
-                            // עדיפות למודל הכי מתקדם שיש ברשימה הפרטית שלך
-                            if (supported.includes("gemini-1.5-flash")) targetModel = "gemini-1.5-flash";
-                            else if (supported.includes("gemini-1.5-pro")) targetModel = "gemini-1.5-pro";
-                            else if (supported.includes("gemini-1.0-pro")) targetModel = "gemini-1.0-pro";
-                            else if (supported.includes("gemini-pro")) targetModel = "gemini-pro";
-                            else targetModel = supported[0]; // ברירת מחדל: הראשון שפתוח
-                        } else {
-                            listError = "לא נמצאו מודלים של Gemini שפתוחים למפתח זה.";
-                        }
-                    } else if (listData.error) {
-                        listError = listData.error.message;
-                    }
-                } catch(e) {
-                    console.warn("Auto-discovery failed", e);
-                    targetModel = "gemini-1.0-pro"; // גיבוי אחרון אם השליפה נכשלה רשתית
-                }
-
-                if (!targetModel) {
-                    addChatMessage(`שגיאת הרשאות: ${listError || "לא ניתן להשתמש במפתח זה."}`, 'bot');
-                    history.pop();
-                    btn.disabled = false; btn.innerHTML = '<i class="ph ph-paper-plane-right"></i>';
-                    return;
-                }
-
-                // 2. שליחת הבקשה למודל הספציפי שאותר
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${targetModel}:generateContent?key=${keyToUse}`;
-                let currentPayload = { contents: JSON.parse(JSON.stringify(history)) };
-                
-                if (targetModel.includes("1.5") || targetModel.includes("2.0")) {
-                    currentPayload.systemInstruction = { parts: [{ text: systemPrompt }] };
-                } else {
-                    // מודלים ישנים (gemini-pro / 1.0) צריכים לקבל את ההוראות בתוך הטקסט עצמו
-                    if (currentPayload.contents.length > 0) {
-                        currentPayload.contents[0].parts[0].text = `[הנחיות מערכת: ${systemPrompt}]\n\nהודעת משתמש: ${currentPayload.contents[0].parts[0].text}`;
-                    }
-                }
-
-                const response = await fetch(apiUrl, { 
-                    method: 'POST', 
-                    headers: { 'Content-Type': 'application/json' }, 
-                    body: JSON.stringify(currentPayload) 
-                });
-                const data = await response.json();
-                
-                if (response.ok && data.candidates && data.candidates[0].content) {
-                    const reply = data.candidates[0].content.parts[0].text;
-                    history.push({role: "model", parts: [{text: reply}]});
-                    addChatMessage(reply, 'bot');
-                } else {
-                    const errStr = data.error?.message || `HTTP ${response.status}`;
-                    addChatMessage(`שגיאה בהפעלת המודל (${targetModel}): ${errStr}`, 'bot');
-                    history.pop();
-                }
-            } catch (err) { 
-                addChatMessage(`שגיאת תקשורת כללית: ${err.message}`, 'bot'); 
-                history.pop();
-            } 
-            finally { btn.disabled = false; btn.innerHTML = '<i class="ph ph-paper-plane-right"></i>'; }
-        }
-
-        function addChatMessage(text, sender) {
+        window.addChatMessage = function(text, sender) {
             const container = document.getElementById('chat-messages');
             const div = document.createElement('div');
             const formattedText = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
@@ -1457,19 +1654,63 @@
                 div.innerHTML = `<div class="w-8 h-8 rounded-full bg-brand-100 flex items-center justify-center text-brand-600 flex-shrink-0"><i class="ph ph-robot text-lg"></i></div><div class="bg-gray-100 dark:bg-slate-700 p-3 rounded-2xl rounded-tr-none text-gray-700 dark:text-gray-200">${formattedText}</div>`;
             }
             container.appendChild(div); container.scrollTop = container.scrollHeight;
-        }
+        };
 
-        // Init
+        window.handleGeminiQuery = async function(e) {
+            e.preventDefault();
+            const input = document.getElementById('gemini-input');
+            const q = input.value.trim();
+            if(!q) return;
+
+            window.addChatMessage(q, 'user');
+            input.value = '';
+            const btn = document.getElementById('gemini-submit');
+            btn.disabled = true; btn.innerHTML = '<i class="ph ph-spinner animate-spin"></i>';
+
+            const activeTasksStr = JSON.stringify((window.appState.tasks || []).filter(t=>t.status==='active').map(t=>({title: t.title, due: t.dueDate})));
+            const systemPrompt = `אתה עוזר וירטואלי במערכת TaskMaster. ענה בעברית בצורה עניינית. להלן המשימות של המשתמש: ${activeTasksStr}`;
+            window.appState.geminiChatHistory.push({role: "user", parts: [{text: q}]});
+
+            try {
+                const apiKey = ""; 
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+                const payload = { contents: window.appState.geminiChatHistory, systemInstruction: { parts: [{ text: systemPrompt }] } };
+                
+                const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                const data = await response.json();
+                
+                if (response.ok && data.candidates) {
+                    const reply = data.candidates[0].content.parts[0].text;
+                    window.appState.geminiChatHistory.push({role: "model", parts: [{text: reply}]});
+                    window.addChatMessage(reply, 'bot');
+                } else {
+                    let errMsg = data.error?.message || 'שגיאת רשת';
+                    window.addChatMessage(`שגיאה בעוזר החכם: ${errMsg}`, 'bot');
+                    window.appState.geminiChatHistory.pop();
+                }
+            } catch (err) { 
+                window.addChatMessage(`שגיאת רשת מול השרתים של גוגל. בדוק את החיבור.`, 'bot'); 
+                window.appState.geminiChatHistory.pop();
+            } 
+            finally { btn.disabled = false; btn.innerHTML = '<i class="ph ph-paper-plane-right"></i>'; }
+        };
+
+        // Init App
         document.addEventListener("DOMContentLoaded", () => {
-            window.loadFromLocalStorage();
-            if(window.appState.tasks.length === 0 && window.appState.categories.length === 0) window.injectDemoDataLocal();
+            window.initDB();
+            window.checkDriveConnection();
+            window.checkLogin();
             if(window.appState.theme === 'dark') document.documentElement.classList.add('dark');
-            navigate('dashboard');
+            if(!window.appState.showClock) document.getElementById('header-clock')?.classList.add('hidden');
             
-            if (!localStorage.getItem('taskmaster_drive_url')) {
-                document.getElementById('drive-url-input').value = HARDCODED_DRIVE_URL;
-                setTimeout(() => window.connectDrive(), 500); 
-            }
+            // מתחבר מיד לדרייב כדי למשוך ולדחוף משתמשים ונתונים
+            setTimeout(() => {
+                if (!window.initialDriveLoadDone) { 
+                    window.initialDriveLoadDone = true; 
+                    window.forceSyncFromDrive(true);
+                }
+            }, 100); 
+            window.updateClock();
         });
     </script>
 </body>
